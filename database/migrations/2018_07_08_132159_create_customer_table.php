@@ -24,7 +24,7 @@ class CreateCustomerTable extends Migration
             $table->string ('addLine1');
             $table->string ('addLine2');
             $table->string ('city');
-            $table->integer ('route_id');
+            $table->integer ('salesRep_id');
             $table->timestamps();
         });
     }
