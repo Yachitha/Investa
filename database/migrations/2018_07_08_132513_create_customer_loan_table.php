@@ -17,6 +17,7 @@ class CreateCustomerLoanTable extends Migration
             $table->increments('id');
             $table->integer ('loan_no');
             $table->float ('interest_rate');
+            $table->float ('loan_amount');
             $table->float ('installment_amount');
             $table->integer ('no_of_installments');
             $table->date ('start_date');

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\api;
 
-use App\Customer_repayment;
+use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -17,22 +17,21 @@ class LoginController extends Controller
         $remember = $request->remember;
         if(Auth::attempt (['email'=>$email,'password'=>$password],$remember)){
             $user = Auth::user ();
-            $customers = collect ($user->hasCustomer);
-            $array1 = [];
-            $array2 = [];
+            $customers = User::find(Auth::id ())->hasCustomer;
+            $loans=[];
             foreach ($customers as $customer){
-                $loans = Customer::find($customer->id)->hasLoan;
-                $array1 []=$loans;
+                $loans = collect ($loans)->merge(Customer::find($customer->id)->hasLoan);
+                $repayment=[];
                 foreach ($loans as $loan){
-                    $repayment = Customer_loan::find($loan->id)->hasRepayment;
-                    $array2[]=$repayment;
+                    $repayment = collect ($repayment)->merge (Customer_loan::find($loan->id)->hasRepayment);
                 }
             }
             return response ()->json ([
                 'error'=>FALSE,
                 'user'=>$user,
-                'customer_loans'=>collect ($array1),
-                'customer_repayments'=>collect ($array2),
+                'customers'=>$customers,
+                'loans'=>$loans,
+                'repayments'=>$repayment
             ],200);
         }
         else{
