@@ -10,12 +10,18 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Whoops\Exception\ErrorException;
 
 class RepaymentController extends Controller
 {
+    /**
+     * The good method is to create separate cash_book controller and use class object injection to get to use method
+     * in this controller
+     */
     private $loan_amount;
     private $no_of_installments;
+
     public function customerRepayments(Request $request){
         $loan_id = $request->loan_id;
         $cash_amount = $request->cash_amount;
@@ -129,6 +135,9 @@ class RepaymentController extends Controller
         return $loan_repayments;
     }
 
+    /**
+     * Logic wrong, should go to another spring
+     */
     public function editCustomerRepayment(Request $request){
         $id = $request->repayment_id;
         $cash_amount = $request->cash_amount;
@@ -140,6 +149,32 @@ class RepaymentController extends Controller
             $repayment = Customer_repayment::find($id);
             if ($repayment){
                 if (Carbon::parse ($repayment->created_at)->isSameDay ($date) ){
+                    if($id!=1){
+                        $last_balance = Cash_book::all ()->last ()->balance;
+
+                        $cash_book_withdraw = new Cash_book();
+                        $cash_book_withdraw->transaction_date = Carbon::now ();
+                        $cash_book_withdraw->description = Auth::user ()->name." adjustment have been made ".Customer_loan::find($repayment->loan_id)->loan_no;
+                        $cash_book_withdraw->deposit = 0;
+                        $cash_book_withdraw->withdraw = $repayment->amount;
+                        $cash_book_withdraw->balance = $last_balance - ($repayment->amount);
+                        $cash_book_withdraw->save ();
+
+                        $cash_book_deposit = new Cash_book();
+                        $cash_book_deposit->transaction_date =Carbon::now ();
+                        $cash_book_deposit->description = Auth::user ()->name." adjustment have been made ".Customer_loan::find($repayment->loan_id)->loan_no;
+                        $cash_book_deposit->deposit = $cash_amount+$bank_amount;
+                        $cash_book_deposit->withdraw = 0;
+                        $cash_book_deposit->balance = $cash_book_withdraw->balance+($cash_amount+$bank_amount);
+                        $cash_book_deposit->save ();
+
+                        $lastRemainingAmount = Customer_repayment::find($id-1)->remaining_amount;//wrong
+                        $repayment->remaining_amount = $lastRemainingAmount - ($cash_amount+$bank_amount);
+                    }
+                    else{
+                        $loan_amount = Customer_repayment::find($id)->hasLoan->amount;
+                        $repayment->remaining_amount = $loan_amount - ($cash_amount+$bank_amount);
+                    }
                     $repayment->amount = $cash_amount+$bank_amount;//case-same date
 //                    if($bank_amount){
 //                        $repayment->cheque_no = $cheque_no;
