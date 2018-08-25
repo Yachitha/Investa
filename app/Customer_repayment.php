@@ -8,7 +8,7 @@ class Customer_repayment extends Model
 {
     protected $table = 'customer_loan_repayment';
     protected $fillable = [
-        'amount', 'installment_count', 'remaining_amount', 'loan_id', 'cash_book_id', 'bank_book_id'
+        'amount', 'installment_count', 'remaining_amount', 'loan_id',
     ];
 
     public function hasCustomerLoan(){

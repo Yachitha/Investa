@@ -16,8 +16,8 @@ class CreateCustomerLoanRepaymentTable extends Migration
         Schema::create('customer_loan_repayment', function (Blueprint $table) {
             $table->increments('id');
             $table->integer ('loan_id');
-            $table->integer ('bank_book_id');
-            $table->integer ('cash_book_id');
+            $table->integer ('bank_book_id')->nullable();
+            $table->integer ('cash_book_id')->nullable();
             $table->float ('amount');
             $table->integer ('installment_count');
             $table->float ('remaining_amount');

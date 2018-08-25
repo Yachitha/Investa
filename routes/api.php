@@ -22,5 +22,6 @@ Route::post('/login', 'api\LoginController@login');
 Route::group(['middleware'=>'api'],function (){
     Route::post('/users', 'api\UserController@store');
     Route::post('/customerRepayments','api\RepaymentController@customerRepayments');
+    Route::post ('/editCustomerRepayments','api\RepaymentController@editCustomerRepayment');
 });
 

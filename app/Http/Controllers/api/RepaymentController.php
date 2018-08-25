@@ -7,8 +7,10 @@ use App\Cash_book;
 use App\Customer_loan;
 use App\Customer_repayment;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Whoops\Exception\ErrorException;
 
 class RepaymentController extends Controller
 {
@@ -31,7 +33,7 @@ class RepaymentController extends Controller
             $cash_book = new Cash_book();
             $cash_book->transaction_date = Carbon::now ();
             $cash_book->description = $customer_name." repayments to ".$customer_loan->loan_no;
-            $cash_book->deposite = $cash_amount;
+            $cash_book->deposit = $cash_amount;
             $cash_book->withdraw = 0;
             $cash_book->balance = $cash_last_balance+$cash_amount;
             $cash_book->save ();
@@ -43,7 +45,7 @@ class RepaymentController extends Controller
             $bank_book = new Bank_book();
             $bank_book->transaction_date = Carbon::now ();
             $bank_book->description = $customer_name." repayments to ".$customer_loan->loan_no." by cheque number ".$cheque_no;
-            $bank_book->deposite = $bank_amount;
+            $bank_book->deposit = $bank_amount;
             $bank_book->withdraw = 0;
             $bank_book->balance = $bank_last_balance+$bank_amount;
             $bank_book->cheque_no = $cheque_no;
@@ -62,7 +64,7 @@ class RepaymentController extends Controller
             $cash_book = new Cash_book();
             $cash_book->transaction_date = Carbon::now ();
             $cash_book->description = $customer_name." repayments to ".$customer_loan->loan_no;
-            $cash_book->deposite = $cash_amount;
+            $cash_book->deposit = $cash_amount;
             $cash_book->withdraw = 0;
             $cash_book->balance = $cash_last_balance+$cash_amount;
             $cash_book->save ();
@@ -80,7 +82,7 @@ class RepaymentController extends Controller
             $bank_book = new Bank_book();
             $bank_book->transaction_date = Carbon::now ();
             $bank_book->description = $customer_name." repayments to ".$customer_loan->loan_no." by cheque number ".$cheque_no;
-            $bank_book->deposite = $bank_amount;
+            $bank_book->deposit = $bank_amount;
             $bank_book->withdraw = 0;
             $bank_book->balance = $bank_last_balance+$bank_amount;
             $bank_book->cheque_no = $cheque_no;
@@ -125,5 +127,48 @@ class RepaymentController extends Controller
         }
 
         return $loan_repayments;
+    }
+
+    public function editCustomerRepayment(Request $request){
+        $id = $request->repayment_id;
+        $cash_amount = $request->cash_amount;
+        $bank_amount= $request->bank_amount;//amount should validate by the app ===> isRequired
+        //$cheque_no = $request->cheque_no;
+        $date = Carbon::parse ($request->repayment_date);
+
+        try{
+            $repayment = Customer_repayment::find($id);
+            if ($repayment){
+                if (Carbon::parse ($repayment->created_at)->isSameDay ($date) ){
+                    $repayment->amount = $cash_amount+$bank_amount;//case-same date
+//                    if($bank_amount){
+//                        $repayment->cheque_no = $cheque_no;
+//                    }
+                    $repayment->save();
+
+                    return response ()->json ([
+                        'error'=>false,
+                        'repayment'=>$repayment
+                    ]);
+                }else{
+                    //case-not the same date
+                    return response ()->json ([
+                        'error'=>true,
+                        'message'=>"Edit must done in same date"
+                    ]);
+                }
+            }else{
+                //case-no repayment exists
+                return response ()->json ([
+                    'error'=>TRUE,
+                    'message'=>"no repayment exists with given id"
+                ]);
+            }
+        }catch (ModelNotFoundException $modelNotFoundException){
+            return response ()->json ([
+                'error'=>TRUE,
+                'message'=>"Model not found",
+            ]);
+        }
     }
 }
