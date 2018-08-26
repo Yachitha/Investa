@@ -8,7 +8,7 @@ class Customer extends Model
 {
     protected $table = 'customer';
     protected $fillable = [
-        'customer_no', 'name', 'email', 'NIC', 'contact_no', 'status', 'addLine1', 'addLine2', 'city', 'route_id'
+        'customer_no', 'name', 'email', 'NIC', 'contact_no', 'status', 'addLine1', 'addLine2', 'city', 'route_id','salesRep_id'
     ];
 
     public function hasSalesRep(){

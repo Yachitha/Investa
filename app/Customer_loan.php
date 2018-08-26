@@ -8,7 +8,7 @@ class Customer_loan extends Model
 {
     protected $table = 'customer_loan';
     protected $fillable = [
-        'loan_no', 'start_date', 'end_date', 'customer_id', 'no_of_installments', 'installment_amount', 'interest_rate',
+        'loan_no','loan_amount' ,'start_date', 'end_date', 'customer_id', 'no_of_installments', 'installment_amount', 'interest_rate', 'duration'
     ];
 
     public function hasCustomer(){

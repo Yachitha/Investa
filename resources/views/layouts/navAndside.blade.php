@@ -8,7 +8,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" type="image/png" sizes="16x16" href="../plugins/images/favicon.png">
-    <title>Southern Investa - Micro Credit System for rural people</title>
+    <title>Southern Property Developers - Micro Credit System for rural people</title>
     <!-- Bootstrap Core CSS -->
     <link href="pixeladmin-lite/html/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Menu CSS -->
@@ -37,7 +37,7 @@
         <nav class="navbar navbar-default navbar-static-top m-b-0">
             <div class="navbar-header"> <a class="navbar-toggle hidden-sm hidden-md hidden-lg " href="javascript:void(0)" data-toggle="collapse" data-target=".navbar-collapse"><i class="fa fa-bars
 "></i></a>
-                <div class="top-left-part"><a class="logo" href="index.html"><b><img src="pixeladmin-lite/si2.png" alt="home" /></b><span class="hidden-xs"><b class="hidden-xs">Investa</b></span></a></div>
+                <div class="top-left-part"><a class="logo" href="underConstruction"><b><img src="pixeladmin-lite/si2.png" alt="home" /></b><span class="hidden-xs"><b class="hidden-xs">Investa</b></span></a></div>
                 <ul class="nav navbar-top-links navbar-left m-l-20 hidden-xs">
                     <li>
                         <form role="search" class="app-search hidden-xs">
@@ -47,7 +47,7 @@
                 </ul>
                 <ul class="nav navbar-top-links navbar-right pull-right">
                     <li>
-                        <a class="profile-pic" href="#"> <img src="pixeladmin-lite/plugins/images/users/varun.jpg" alt="user-img" width="36" class="img-circle"><b class="hidden-xs">Nadeeka</b> </a>
+                        <a class="profile-pic" href="#"> <img src="pixeladmin-lite/plugins/images/users/varun.jpg" alt="user-img" width="36" class="img-circle"><b class="hidden-xs">{{ \Illuminate\Support\Facades\Auth::user ()->name }}</b> </a>
                     </li>
                 </ul>
             </div>
@@ -71,22 +71,22 @@
                     <li>
                         <a href="{{ url('/cashBalance') }}" class="waves-effect"><i class="fa fa-font fa-fw" aria-hidden="true"></i><span class="hide-menu">Add Cash Book Balance</span></a>
                     </li>
-                    <li>
-                        <a href="map-google.html" class="waves-effect"><i class="fa fa-globe fa-fw" aria-hidden="true"></i><span class="hide-menu">Google Map</span></a>
-                    </li>
-                    <li>
-                        <a href="blank.html" class="waves-effect"><i class="fa fa-columns fa-fw" aria-hidden="true"></i><span class="hide-menu">Blank Page</span></a>
-                    </li>
-                    <li>
-                        <a href="404.html" class="waves-effect"><i class="fa fa-info-circle fa-fw" aria-hidden="true"></i><span class="hide-menu">Error 404</span></a>
-                    </li>
+                    {{--<li>--}}
+                        {{--<a href="map-google.html" class="waves-effect"><i class="fa fa-globe fa-fw" aria-hidden="true"></i><span class="hide-menu">Google Map</span></a>--}}
+                    {{--</li>--}}
+                    {{--<li>--}}
+                        {{--<a href="blank.html" class="waves-effect"><i class="fa fa-columns fa-fw" aria-hidden="true"></i><span class="hide-menu">Blank Page</span></a>--}}
+                    {{--</li>--}}
+                    {{--<li>--}}
+                        {{--<a href="404.html" class="waves-effect"><i class="fa fa-info-circle fa-fw" aria-hidden="true"></i><span class="hide-menu">Error 404</span></a>--}}
+                    {{--</li>--}}
                 </ul>
-                <div class="center p-20">
-                    <span class="hide-menu"><a href="http://wrappixel.com/templates/pixeladmin/" target="_blank" class="btn btn-danger btn-block btn-rounded waves-effect waves-light">Upgrade to Pro</a></span>
-                </div>
+                {{--<div class="center p-20">--}}
+                    {{--<span class="hide-menu"><a href="http://wrappixel.com/templates/pixeladmin/" target="_blank" class="btn btn-danger btn-block btn-rounded waves-effect waves-light">Upgrade to Pro</a></span>--}}
+                {{--</div>--}}
             </div>
         </div>
-    <div id="page-wrapper">    
+    <div id="page-wrapper">
     <div class="container">
         <!-- Left navbar-header end -->
         @yield('content')

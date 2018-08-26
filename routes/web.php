@@ -11,8 +11,11 @@
 |
 */
 
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+
 Route::get('/', function () {
-    return view('welcome');
+    return view('underConstruction');
 });
 Route::get('/home1', function () {
     return view('home1');
@@ -32,6 +35,10 @@ Route::get('/bankBalance', function () {
 Route::get('/cashBalance', function () {
     return view('daywork/cashBalance');
 });
+
+Route::post ('/createCustomer','CustomerController@createCustomer');
+
+Route::post('/createLoan','LoanController@createLoan');
 
 
 Auth::routes();
