@@ -46,11 +46,6 @@
     <input type="text" class="form-control" name="nic" placeholder="123456789V">
   </div>
   <div class="form-group">
-    <label for="exampleFormControlInput1">Email address</label>
-    <input type="email" class="form-control" name="email" placeholder="name@example.com">
-  </div>
-
-  <div class="form-group">
     <label for="exampleFormControlInput1">Telephone Number</label>
     <input type="text" class="form-control" name="contact_no" placeholder=" 07X XXX XXXX">
   </div>

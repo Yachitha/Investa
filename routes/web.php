@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
-    return view('underConstruction');
+    return view('Home.home');
 });
 Route::get('/home1', function () {
     return view('home1');
@@ -40,14 +40,6 @@ Route::post ('/createCustomer','CustomerController@createCustomer');
 
 Route::post('/createLoan','LoanController@createLoan');
 
-
-Auth::routes();
-
-Route::get('/home', 'HomeController@index')->name('home');
-
-Auth::routes();
-
-Route::get('/home', 'HomeController@index')->name('home');
 
 Auth::routes();
 

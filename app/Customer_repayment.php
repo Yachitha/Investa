@@ -12,6 +12,14 @@ class Customer_repayment extends Model
     ];
 
     public function hasCustomerLoan(){
-        return $this->belongsTo ('Customer_loan','loan_id');
+        return $this->belongsTo ('App\Customer_loan','loan_id');
+    }
+
+    public function hasBankBook(){
+        return $this->belongsTo ('App\Bank_book','bank_book_id');
+    }
+
+    public function hasCashBook() {
+        return $this->belongsTo ('App\Cash_book', 'cash_book_id');
     }
 }

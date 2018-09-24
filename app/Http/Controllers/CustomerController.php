@@ -13,7 +13,6 @@ class CustomerController extends Controller
         $validate = Validator::make ($request->all (),[
             'name' => 'required|string|max:255',
             'customer_no'=>'required|unique',
-            'email' => 'required|string|email|max:255|unique:users',
             'nic'=>'required|string|min:10',
             'contact_no'=>'required|regex:/[0-9]{9}/',
             'addLine1'=>'required',
@@ -29,7 +28,7 @@ class CustomerController extends Controller
                 $customer = Customer::create([
                     'customer_no'=>$request->customer_no,
                     'name' => $request->name,
-                    'email' => $request->email,
+                    'email' => $request->name."001"."@gmail.com",
                     'NIC'=>$request->nic,
                     'addLine1'=>$request->addLine1,
                     'addLine2'=>$request->addLine2,
