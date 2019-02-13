@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api;
 use Illuminate\Http\Request;
 use App\User;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
@@ -33,7 +34,7 @@ class UserController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request $request
-     * @return void
+     * @return Response
      */
     public function store(Request $request)
     {
@@ -48,6 +49,7 @@ class UserController extends Controller
         $commission_id = $request->commission_id;
         $calender_id = $request->calender_id;
         $role_id = $request->role_id;
+        $route_id = $request->route_id;
 
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
@@ -76,7 +78,8 @@ class UserController extends Controller
                 'role_id' =>$role_id,
                 'city'=>$city,
                 'commission_id'=>$commission_id,
-                'calendar_id'=>$calender_id
+                'calendar_id'=>$calender_id,
+                'route_id'=>$route_id
             ]);
 
             if($user)

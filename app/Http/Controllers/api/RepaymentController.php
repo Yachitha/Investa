@@ -165,6 +165,8 @@ class RepaymentController extends Controller
 
     /**
      * Logic wrong, should go to another spring
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function editCustomerRepayment(Request $request){
         $id = $request->repayment_id;
@@ -184,7 +186,7 @@ class RepaymentController extends Controller
                         $cash_book_withdraw->transaction_date = Carbon::now ();
                         $cash_book_withdraw->description = "adjustment have been made for loan no ".$repayment->hasCustomerLoan->loan_no;
                         $cash_book_withdraw->deposit = 0.0;
-                        $cash_book_withdraw->withdraw = $repayment->hasCashBook->deposit;
+                        $cash_book_withdraw->withdraw = $repayment->hasCashBook->deposit?$repayment->hasCashBook->deposit:0.0;
                         $cash_book_withdraw->balance = $last_balance - ($repayment->hasCashBook->deposit);
                         $cash_book_withdraw->save ();
 
@@ -203,7 +205,7 @@ class RepaymentController extends Controller
                             $bank_book_withdraw->transaction_date = Carbon::now ();
                             $bank_book_withdraw->description = "adjustment have been made for loan no ".$repayment->hasCustomerLoan->loan_no;
                             $bank_book_withdraw->deposit = 0.0;
-                            $bank_book_withdraw->withdraw = $repayment->hasBankBook->deposit;//should reduce the deposit amount of the repayment first
+                            $bank_book_withdraw->withdraw = $repayment->hasBankBook->deposit?$repayment->hasBankBook->deposit:0.0;//should reduce the deposit amount of the repayment first
                             $bank_book_withdraw->balance = $last_balance_bank - ($repayment->hasBankBook->deposit);
                             $bank_book_withdraw->cheque_no = $cheque_no ? $cheque_no: $bank_book_withdraw->cheque_no;
                             $bank_book_withdraw->save ();
@@ -220,8 +222,8 @@ class RepaymentController extends Controller
                             $repayment->bank_book_id = $bank_book_deposit->id;
                         }
 
-                        $lastRemainingAmount = $repayment->remaining_amount-$repayment->amount;
-                        $repayment->remaining_amount = $lastRemainingAmount + ($cash_amount+$bank_amount);
+                        $lastRemainingAmount = $repayment->remaining_amount+$repayment->amount;
+                        $repayment->remaining_amount = $lastRemainingAmount - ($cash_amount+$bank_amount);
                         $repayment->cash_book_id = $cash_book_deposit->id;
                     }
                     else{
