@@ -19,6 +19,8 @@ class CreateOtherExpensesTable extends Migration
             $table->string ('description');
             $table->float ('amount');
             $table->integer ('user_id'); //admin or salesRep
+            $table->integer ('cash_book_id');
+            $table->integer ('bank_book_id');
             $table->timestamps();
         });
     }

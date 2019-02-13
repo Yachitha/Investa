@@ -19,6 +19,10 @@ class CreateSalesRepExpensesTable extends Migration
             $table->string ('description');
             $table->float ('amount');
             $table->integer ('sales_rep_id');
+            /** @noinspection PhpUndefinedMethodInspection */
+            $table->integer ('cash_book_id')->nullable();
+            /** @noinspection PhpUndefinedMethodInspection */
+            $table->integer ('bank_book_id')->nullable();
             $table->timestamps();
         });
     }

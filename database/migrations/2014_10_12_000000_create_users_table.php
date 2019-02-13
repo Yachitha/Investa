@@ -26,6 +26,7 @@ class CreateUsersTable extends Migration
             $table->integer ('commission_id');
             $table->integer ('calendar_id');
             $table->integer ('role_id');
+            $table->integer ('route_id');
             $table->rememberToken();
             $table->timestamps();
         });

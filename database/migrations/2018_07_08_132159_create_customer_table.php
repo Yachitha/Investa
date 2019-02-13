@@ -17,7 +17,6 @@ class CreateCustomerTable extends Migration
             $table->increments('id');
             $table->integer ('customer_no');
             $table->string ('name');
-            $table->string ('email');
             $table->string ('NIC')->unique();
             $table->string ('contact_no');
             $table->string ('status');
@@ -25,6 +24,7 @@ class CreateCustomerTable extends Migration
             $table->string ('addLine2');
             $table->string ('city');
             $table->integer ('salesRep_id');
+            $table->integer ('route_id');
             $table->timestamps();
         });
     }
