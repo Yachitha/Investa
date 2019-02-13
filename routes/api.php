@@ -23,5 +23,7 @@ Route::group(['middleware'=>'api'],function (){
     Route::post('/users', 'api\UserController@store');
     Route::post('/customerRepayments','api\RepaymentController@customerRepayments');
     Route::post ('/editCustomerRepayments','api\RepaymentController@editCustomerRepayment');
+    Route::post ('/createPocketMoney','api\PocketMoneyController@createPocketMoneyRow');
+    Route::post('/addCustomerToDb', 'Customers\CustomerDashboardController@addCustomer');
 });
 
