@@ -37,7 +37,7 @@
                             <input id="password" name="password" type="password" v-on:input="hideLabelPassword" v-model="password"/>
                             <label for="password" v-if="seenPassword">Password</label>
                         </div>
-                        <input type="submit" id="submit" value="login" v-on:click="onSubmitForm"/>
+                        <input type="submit" id="submit" value="login" v-on:click="onSubmitForm" v-show="seenSubmit"/>
                     </form>
                 </div>
             </div>
@@ -57,6 +57,7 @@
             return {
                 seenEmail: true,
                 seenPassword: true,
+                seenSubmit: true,
                 email: "",
                 password: ""
             }
@@ -82,13 +83,77 @@
                         group: 'auth',
                         title: 'Error',
                         type: 'error',
-                        text: 'Please enter Email and Password',
+                        text: 'Email field required!',
+                        fontsize: '20px'
                     });
                 }else if(this.password === ''){
                     //show error msg
+                    event.preventDefault();
+                    this.$notify({
+                        group: 'auth',
+                        title: 'Error',
+                        type: 'error',
+                        text: 'Password required!',
+                        fontsize: '20px'
+                    });
                 }else{
-                    //email and password entered send request if email is okay and password is wrong display alert
-                    //if password is wrong display error msg
+                    event.preventDefault();
+                    this.seenSubmit = false;
+                    this.$Progress.start();
+                    axios.defaults.headers.common = {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN' : document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    };
+                    axios.post('/login',{
+                        email: this.email,
+                        password: this.password
+                    }).then((response) => {
+                        if (response.status === 200){
+                            window.location.href='/createCustomer';
+                            this.$Progress.finish();
+                        }
+                    }).catch((error) => {
+                        if ((error.response.data.errors.email)!=null){
+                            this.seenSubmit=true;
+                            this.$notify({
+                                group: 'auth',
+                                title: 'Error',
+                                type: 'error',
+                                text: error.response.data.errors.email[0],
+                                fontsize: '20px'
+                            });
+                            this.$Progress.fail();
+                        }
+                        if ((error.response.data.errors.password)!=null){
+                            this.seenSubmit=true;
+                            this.$notify({
+                                group: 'auth',
+                                title: 'Error',
+                                type: 'error',
+                                text: error.response.data.errors.password[0],
+                                fontsize: '20px'
+                            });
+                            this.$Progress.fail();
+                        }
+                        if ((error.response.data.message)!=null){
+                            this.seenSubmit=true;
+                            this.$notify({
+                                group: 'auth',
+                                title: 'Error',
+                                type: 'error',
+                                text: error.response.data.message,
+                                fontsize: '20px'
+                            });
+                            this.$Progress.fail();
+                        }
+                        if ((error.response.status === 429)){
+                            this.seenSubmit = false;
+                            setTimeout(() => {
+                                this.seenSubmit = true;
+                            },10000);
+                            this.$Progress.fail();
+                        }
+                    });
                 }
             }
         }
