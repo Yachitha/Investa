@@ -104,17 +104,17 @@
                         'X-Requested-With': 'XMLHttpRequest',
                         'X-CSRF-TOKEN' : document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                     };
-                    axios.post('/login',{
+                    axios.post('/login', {
                         email: this.email,
                         password: this.password
                     }).then((response) => {
-                        if (response.status === 200){
-                            window.location.href='/createCustomer';
+                        if (response.status === 200) {
+                            window.location.href = '/createCustomer';
                             this.$Progress.finish();
                         }
                     }).catch((error) => {
-                        if ((error.response.data.errors.email)!=null){
-                            this.seenSubmit=true;
+                        if ((error.response.data.errors.email) != null) {
+                            this.seenSubmit = true;
                             this.$notify({
                                 group: 'auth',
                                 title: 'Error',
@@ -124,8 +124,8 @@
                             });
                             this.$Progress.fail();
                         }
-                        if ((error.response.data.errors.password)!=null){
-                            this.seenSubmit=true;
+                        if ((error.response.data.errors.password) != null) {
+                            this.seenSubmit = true;
                             this.$notify({
                                 group: 'auth',
                                 title: 'Error',
@@ -135,8 +135,8 @@
                             });
                             this.$Progress.fail();
                         }
-                        if ((error.response.data.message)!=null){
-                            this.seenSubmit=true;
+                        if ((error.response.data.message) != null) {
+                            this.seenSubmit = true;
                             this.$notify({
                                 group: 'auth',
                                 title: 'Error',
@@ -146,11 +146,11 @@
                             });
                             this.$Progress.fail();
                         }
-                        if ((error.response.status === 429)){
+                        if ((error.response.status === 429)) {
                             this.seenSubmit = false;
                             setTimeout(() => {
                                 this.seenSubmit = true;
-                            },10000);
+                            }, 10000);
                             this.$Progress.fail();
                         }
                     });
