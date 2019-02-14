@@ -4,6 +4,14 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property  loan_id
+ * @property null bank_book_id
+ * @property float amount
+ * @property null cash_book_id
+ * @property mixed installment_count
+ * @property mixed remaining_amount
+ */
 class Customer_repayment extends Model
 {
     protected $table = 'customer_loan_repayment';
