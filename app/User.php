@@ -15,7 +15,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password','profile_pic', 'NIC','addLine1','addLine2','city','commission_id','role_id','calendar_id','salesRep_id', 'route_id'
+        'name', 'email', 'password','profile_pic', 'NIC','addLine1','addLine2','city','role_id','route_id'
     ];
 
     /**
@@ -27,7 +27,7 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
-    public function hasCustomer(){
-        return $this->hasMany ('App\Customer','salesRep_id');
+    public function hasRoute(){
+        return $this->belongsTo('App\Route','route_id');
     }
 }
