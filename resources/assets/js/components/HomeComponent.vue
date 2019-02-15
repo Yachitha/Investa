@@ -109,7 +109,7 @@
                         password: this.password
                     }).then((response) => {
                         if (response.status === 200) {
-                            window.location.href = '/createCustomer';
+                            window.location.href = '/dashboard';
                             this.$Progress.finish();
                         }
                     }).catch((error) => {
