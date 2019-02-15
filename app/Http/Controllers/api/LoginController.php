@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\api;
 
+use App\Route;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -17,11 +18,12 @@ class LoginController extends Controller
         $remember = $request->remember;
         if(Auth::attempt (['email'=>$email,'password'=>$password],$remember)){
             $user = Auth::user ();
-            $customers = User::find(Auth::id ())->hasCustomer;
+            $route = User::find(Auth::id())->hasRoute;
+            $customers = Route::find($route->id)->hasCustomers;
             $loans=[];
+            $repayment=[];
             foreach ($customers as $customer){
                 $loans = collect ($loans)->merge(Customer::find($customer->id)->hasLoan);
-                $repayment=[];
                 foreach ($loans as $loan){
                     $repayment = collect ($repayment)->merge (Customer_loan::find($loan->id)->hasRepayment);
                 }
