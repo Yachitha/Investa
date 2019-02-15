@@ -23,7 +23,6 @@ class CreateCustomerLoanTable extends Migration
             $table->date ('start_date');
             $table->date ('end_date');
             $table->integer ('duration');
-            //$table->integer ('sales_rep_id');
             $table->integer ('customer_id');
             $table->timestamps();
         });

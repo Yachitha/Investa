@@ -16,6 +16,7 @@ class CreateUsersTable extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
+            /** @noinspection PhpUndefinedMethodInspection */
             $table->string('email')->unique();
             $table->string('password');
             $table->string ('profile_pic');
@@ -23,10 +24,13 @@ class CreateUsersTable extends Migration
             $table->string ('addLine1');
             $table->string ('addLine2');
             $table->string ('city');
-            $table->integer ('commission_id');
-            $table->integer ('calendar_id');
+            /** @noinspection PhpUndefinedMethodInspection */
+            $table->integer ('commission_id')->nullable();
+            /** @noinspection PhpUndefinedMethodInspection */
+            $table->integer ('calendar_id')->nullable();
             $table->integer ('role_id');
-            $table->integer ('route_id');
+            /** @noinspection PhpUndefinedMethodInspection */
+            $table->integer ('route_id')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
