@@ -231,6 +231,7 @@
                 editedItem: {
                     customerNo: '',
                     customerName: '',
+                    route_id: 0,
                     route: [],
                     nicNo: '',
                     contactNo: '',
@@ -242,6 +243,7 @@
                 defaultItem: {
                     customerNo: '',
                     customerName: '',
+                    route_id: 0,
                     route: [],
                     nicNo: '',
                     contactNo: '',
@@ -254,11 +256,15 @@
                 labelConfigDetails: "Configuration Details",
                 labelShowDeactivate: "Show Deactivate Customers only",
                 deactivate: false,
-                routeId: '',
+                routeId: 0,
                 selectedId: 0,
                 selectedRouteId: 0,
                 selected: {
                     name: "",
+                    id: 0
+                },
+                defaultSelected: {
+                    name: '',
                     id: 0
                 }
             }
@@ -309,10 +315,8 @@
             },
             editItem(item) {
                 this.editedIndex = this.customers.indexOf(item);
-                this.pushRoutes();
-                this.changeSelectedRoute(this.customers[this.editedIndex].route_id);
+                this.setSelected(item.route, item.route_id);
                 this.editedItem = Object.assign({}, item);
-                console.log(this.editedItem);
                 this.dialog = true
             },
 
@@ -326,12 +330,12 @@
                 setTimeout(() => {
                     this.editedItem = Object.assign({}, this.defaultItem);
                     this.editedIndex = -1;
-                    this.pushRoutes()
                 }, 300)
             },
 
             save() {
                 if (this.editedIndex > -1) {
+                    console.log(this.editedItem);
                     Object.assign(this.customers[this.editedIndex], this.editedItem)
                 } else {
                     this.addCustomerToDb(this.editedItem)
@@ -355,12 +359,9 @@
                                 })
                             });
                             this.routesCopy = response.data.routes;
-                            this.pushRoutes();
                             response.data.customers.forEach((item) => {
                                 this.initialize(item);
                             });
-                            console.log(response.data.customers);
-                            console.log(response.data.salesReps);
                             response.data.salesReps.forEach((item) => {
                                 this.addSalesReps(item.route_id, item.id);
                             });
@@ -471,13 +472,10 @@
                 }
             },
 
-            pushRoutes () {
-                this.editedItem.route = this.routesCopy;
-                this.defaultItem.route = this.routesCopy
-            },
-
-            changeSelectedRoute(id) {
-                this.routes.forEach(( route ) => {
+            setSelected(routes, id) {
+                console.log(routes);
+                console.log(id);
+                routes.forEach(( route ) => {
                     if( route.id === id ){
                         this.selected.id = route.id;
                         this.selected.name = route.name;
