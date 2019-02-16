@@ -1,206 +1,390 @@
 <template>
     <v-app>
-        <v-container fluid grid-list-sm>
+        <v-container fluid grid-list-md>
             <v-layout row wrap>
-                <v-flex d-flex xs12 sm5 md5>
-                    <v-layout column wrap>
-                        <v-flex d-flex>
-                            <v-card light color="dark">
-                                <v-subheader>{{ labelSearchCustomer }}</v-subheader>
-                                <v-form>
-                                    <v-container class="pt-0">
-                                        <v-layout row wrap>
-
-                                            <v-flex d-flex>
-                                                <v-text-field
-                                                    label="Customer No"
-                                                    :rules="[rules.customerNo]"
-                                                ></v-text-field>
-                                            </v-flex>
-
-                                            <v-flex d-flex>
-                                                <v-text-field
-                                                    label="Customer Name"
-                                                    :rules="[rules.customerName]"
-                                                ></v-text-field>
-                                            </v-flex>
-
-                                        </v-layout>
-                                    </v-container>
-                                </v-form>
-                            </v-card>
-                        </v-flex>
-                        <v-flex d-flex>
-                            <v-layout row>
-                                <v-flex d-flex>
-                                    <v-card light color="dark">
-                                        <v-subheader>Loan Form</v-subheader>
-                                        <v-form>
-                                            <v-container class="pt-0">
-                                                <v-layout row wrap>
-                                                    <v-flex d-flex>
-                                                        <v-text-field
-                                                            label="Loan Number"
-                                                            disabled
-                                                            v-model="loanNo"
-                                                        ></v-text-field>
-                                                    </v-flex>
-                                                </v-layout>
-                                                <v-layout row wrap>
-                                                    <v-flex d-flex>
-                                                        <v-menu
-                                                            ref="menu2"
-                                                            :close-on-content-click="false"
-                                                            v-model="menu2"
-                                                            :nudge-right="40"
-                                                            :return-value.sync="startDate"
-                                                            lazy
-                                                            transition="scale-transition"
-                                                            offset-y
-                                                            full-width
-                                                            min-width="290px"
-                                                        >
-                                                            <v-text-field
-                                                                slot="activator"
-                                                                v-model="startDate"
-                                                                prepend-icon="event"
-                                                                readonly
-                                                                label="Start Date"
-                                                            ></v-text-field>
-                                                            <v-date-picker v-model="startDate" no-title scrollable>
-                                                                <v-spacer></v-spacer>
-                                                                <v-btn flat color="primary" @click="menu2 = false">
-                                                                    Cancel
-                                                                </v-btn>
-                                                                <v-btn flat color="primary"
-                                                                       @click="$refs.menu2.save(startDate)">OK
-                                                                </v-btn>
-                                                            </v-date-picker>
-                                                        </v-menu>
-                                                    </v-flex>
-                                                </v-layout>
-                                                <v-layout row wrap>
-                                                    <v-radio-group v-model="dayCount" :mandatory="false" row>
-                                                        <v-radio label="30 days" value="30" color="primary"></v-radio>
-                                                        <v-radio label="60 days" value="60" color="primary"></v-radio>
-                                                        <v-radio label="90 days" value="90" color="primary"></v-radio>
-                                                    </v-radio-group>
-                                                </v-layout>
-                                                <v-layout row wrap>
-                                                    <v-flex d-flex>
-                                                        <v-text-field
-                                                            label="End Date"
-                                                            disabled
-                                                            v-model="endDate"
-                                                        ></v-text-field>
-                                                    </v-flex>
-                                                </v-layout>
-                                                <v-layout row wrap>
-                                                    <v-flex d-flex>
-                                                        <v-select
-                                                            color="light"
-                                                            label="sales Rep"
-                                                            :items="salesRepNames">
-                                                        </v-select>
-                                                    </v-flex>
-                                                </v-layout>
-                                                <v-layout row wrap>
-                                                    <v-flex d-flex>
-                                                        <v-text-field
-                                                            label="Commission(%)"
-                                                            v-model="commission"
-                                                        ></v-text-field>
-                                                    </v-flex>
-                                                    <v-flex d-flex>
-                                                        <v-text-field
-                                                            label="Commission Amount"
-                                                            v-model="commAmount"
-                                                        ></v-text-field>
-                                                    </v-flex>
-                                                </v-layout>
-                                                <v-layout row wrap>
-                                                    <v-flex d-flex>
-                                                        <v-select
-                                                            color="light"
-                                                            label="Type"
-                                                            :items="types">
-                                                        </v-select>
-                                                    </v-flex>
-                                                </v-layout>
-                                                <v-layout row wrap>
-                                                    <v-flex d-flex>
-                                                        <v-text-field
-                                                            label="Loan Amount"
-                                                            v-model="loanAmount"
-                                                        ></v-text-field>
-                                                    </v-flex>
-                                                </v-layout>
-                                                <v-layout row wrap>
-                                                    <v-flex d-flex>
-                                                        <v-text-field
-                                                            label="Loan Interest %"
-                                                            v-model="loanInterest"
-                                                        ></v-text-field>
-                                                    </v-flex>
-                                                </v-layout>
-                                                <v-layout row wrap>
-                                                    <v-flex d-flex>
-                                                        <v-text-field
-                                                            label="Days"
-                                                            v-model="loanDays"
-                                                        ></v-text-field>
-                                                    </v-flex>
-                                                </v-layout>
-                                                <v-layout row wrap>
-                                                    <v-flex d-flex>
-                                                        <v-text-field
-                                                            label="Payment Installment"
-                                                            v-model="paymentInstallment"
-                                                        ></v-text-field>
-                                                    </v-flex>
-                                                </v-layout>
-                                                <v-layout row wrap>
-                                                    <v-flex d-flex>
-                                                        <v-text-field
-                                                            label="Total Loan"
-                                                            v-model="totalLoan"
-                                                        ></v-text-field>
-                                                    </v-flex>
-                                                </v-layout>
-                                            </v-container>
-                                        </v-form>
-                                    </v-card>
-                                </v-flex>
-                            </v-layout>
-                        </v-flex>
-                    </v-layout>
-                </v-flex>
-                <v-flex d-flex xs12 sm7 md7>
-                    <v-layout column wrap>
-                        <v-flex d-flex>
-                            <v-card color="dark" light>
-                                <v-subheader>Loans</v-subheader>
-                                <v-data-table :headers="headers" :items="loans" class="elevation-1">
-                                    <template slot="items" slot-scope="props">
-                                        <td>{{ props.item.no }}</td>
-                                        <td>{{ props.item.amount }}</td>
-                                        <td>{{ props.item.interest }}</td>
-                                        <td>{{ props.item.daysCount }}</td>
-                                        <td>{{ props.item.installments }}</td>
-                                        <td>{{ props.item.total }}</td>
-                                        <td>{{ props.item.due }}</td>
-                                    </template>
-                                    <template slot="no-data">
-                                        <v-alert :value="true" color="error" icon="warning">
-                                            Sorry, nothing to display here :(
-                                        </v-alert>
-                                    </template>
-                                </v-data-table>
-                            </v-card>
-                        </v-flex>
-                    </v-layout>
+                <v-flex xs12 sm12 md12>
+                    <v-card dark color="primary" class="text-lg-start">
+                        <v-card-actions>
+                            <v-list-tile class="grow">
+                                <v-list-tile-content>
+                                    <v-list-tile-title>
+                                        {{ labelCustomerLoan }}
+                                    </v-list-tile-title>
+                                </v-list-tile-content>
+                                <v-layout align-center justify-end>
+                                    <v-flex sm8 md8 offset-sm1>
+                                        <v-text-field
+                                            v-model="search"
+                                            append-icon="search"
+                                            label="Search Customer by Name or Number"
+                                            color="white"
+                                            light
+                                            hide-details
+                                        ></v-text-field>
+                                    </v-flex>
+                                </v-layout>
+                            </v-list-tile>
+                        </v-card-actions>
+                    </v-card>
                 </v-flex>
             </v-layout>
+            <v-layout row wrap>
+                <v-flex d-flex>
+                    <v-card color="dark" light>
+                        <v-card-title>
+                            <span class="subheading">{{ labelLoanDetails }}</span>
+                        </v-card-title>
+                        <v-card-text>
+                            <v-container fluid grid-list-md class="pt-0 mr-0 ml-0">
+                                <v-layout wrap>
+                                    <v-flex xs6 sm3 md3>
+                                        <v-text-field
+                                            label="Loan Number"
+                                            disabled
+                                            v-model="loanNo"
+                                        ></v-text-field>
+                                    </v-flex>
+                                    <v-flex xs6 sm3 md3>
+                                        <v-menu
+                                            ref="menu2"
+                                            :close-on-content-click="false"
+                                            v-model="menu2"
+                                            :nudge-right="40"
+                                            :return-value.sync="startDate"
+                                            lazy
+                                            transition="scale-transition"
+                                            offset-y
+                                            full-width
+                                            min-width="290px"
+                                        >
+                                            <v-text-field
+                                                slot="activator"
+                                                v-model="startDate"
+                                                prepend-icon="event"
+                                                readonly
+                                                label="Start Date"
+                                            ></v-text-field>
+                                            <v-date-picker v-model="startDate" no-title scrollable>
+                                                <v-spacer></v-spacer>
+                                                <v-btn flat color="primary" @click="menu2 = false">
+                                                    Cancel
+                                                </v-btn>
+                                                <v-btn flat color="primary"
+                                                       @click="$refs.menu2.save(startDate)">OK
+                                                </v-btn>
+                                            </v-date-picker>
+                                        </v-menu>
+                                    </v-flex>
+                                    <v-flex xs6 sm3 md3>
+                                        <v-select
+                                            color="light"
+                                            label="Select Duration"
+                                            :items="durations">
+                                        </v-select>
+                                        <!--<v-radio-group v-model="dayCount" :mandatory="false" row>-->
+                                        <!--<v-radio label="30 days" value="30" color="primary"></v-radio>-->
+                                        <!--<v-radio label="60 days" value="60" color="primary"></v-radio>-->
+                                        <!--<v-radio label="90 days" value="90" color="primary"></v-radio>-->
+                                        <!--</v-radio-group>-->
+                                    </v-flex>
+                                    <v-flex xs6 sm3 md3>
+                                        <v-flex d-flex>
+                                            <v-text-field
+                                                label="End Date"
+                                                disabled
+                                                v-model="endDate"
+                                            ></v-text-field>
+                                        </v-flex>
+                                    </v-flex>
+                                    <v-flex xs6 sm3 md3>
+                                        <v-select
+                                            color="light"
+                                            label="sales Rep"
+                                            :items="salesRepNames">
+                                        </v-select>
+                                    </v-flex>
+                                    <v-flex xs6 sm2 md2>
+                                        <v-text-field
+                                            label="Commission(%)"
+                                            v-model="commission"
+                                        ></v-text-field>
+                                    </v-flex>
+                                    <v-flex xs6 sm2 md2>
+                                        <v-text-field
+                                            label="Commission Amount"
+                                            v-model="commAmount"
+                                        ></v-text-field>
+                                    </v-flex>
+                                    <v-flex xs6 sm2 md2>
+                                        <v-select
+                                            color="light"
+                                            label="Type"
+                                            :items="types">
+                                        </v-select>
+                                    </v-flex>
+                                    <v-flex xs6 sm3 md3>
+                                        <v-text-field
+                                            label="Loan Amount"
+                                            v-model="loanAmount"
+                                        ></v-text-field>
+                                    </v-flex>
+                                    <v-flex xs6 sm3 md3>
+                                        <v-text-field
+                                            label="Loan Interest %"
+                                            v-model="loanInterest"
+                                        ></v-text-field>
+                                    </v-flex>
+                                    <v-flex xs6 sm3 md3>
+                                        <v-text-field
+                                            label="Days"
+                                            v-model="loanDays"
+                                        ></v-text-field>
+                                    </v-flex>
+                                    <v-flex xs6 sm3 md3>
+                                        <v-text-field
+                                            label="Payment Installment"
+                                            v-model="paymentInstallment"
+                                        ></v-text-field>
+                                    </v-flex>
+                                    <v-flex xs6 sm3 md3>
+                                        <v-text-field
+                                            label="Total Loan"
+                                            v-model="totalLoan"
+                                        ></v-text-field>
+                                    </v-flex>
+                                </v-layout>
+                            </v-container>
+                        </v-card-text>
+                    </v-card>
+                </v-flex>
+            </v-layout>
+            <v-layout row wrap>
+                <v-flex d-flex>
+                    <v-card color="dark" light>
+                        <v-card-title>
+                            <span class="subheading">{{ labelLoans }}</span>
+                        </v-card-title>
+                        <v-card-text>
+                            <v-data-table :headers="headers" :items="loans" class="elevation-1">
+                                <template slot="items" slot-scope="props">
+                                    <td>{{ props.item.no }}</td>
+                                    <td>{{ props.item.amount }}</td>
+                                    <td>{{ props.item.interest }}</td>
+                                    <td>{{ props.item.daysCount }}</td>
+                                    <td>{{ props.item.installments }}</td>
+                                    <td>{{ props.item.total }}</td>
+                                    <td>{{ props.item.due }}</td>
+                                </template>
+                                <template slot="no-data">
+                                    <v-alert :value="true" color="error" icon="warning">
+                                        Sorry, nothing to display here :(
+                                    </v-alert>
+                                </template>
+                            </v-data-table>
+                        </v-card-text>
+                    </v-card>
+                </v-flex>
+            </v-layout>
+            <!--<v-layout row wrap>-->
+                <!--<v-flex d-flex xs12 sm5 md5>-->
+                    <!--<v-layout column wrap>-->
+                        <!--<v-flex d-flex>-->
+                            <!--<v-card light color="dark">-->
+                                <!--<v-subheader>{{ labelSearchCustomer }}</v-subheader>-->
+                                <!--<v-form>-->
+                                    <!--<v-container class="pt-0">-->
+                                        <!--<v-layout row wrap>-->
+
+                                            <!--<v-flex d-flex>-->
+                                                <!--<v-text-field-->
+                                                    <!--label="Customer No"-->
+                                                    <!--:rules="[rules.customerNo]"-->
+                                                <!--&gt;</v-text-field>-->
+                                            <!--</v-flex>-->
+
+                                            <!--<v-flex d-flex>-->
+                                                <!--<v-text-field-->
+                                                    <!--label="Customer Name"-->
+                                                    <!--:rules="[rules.customerName]"-->
+                                                <!--&gt;</v-text-field>-->
+                                            <!--</v-flex>-->
+
+                                        <!--</v-layout>-->
+                                    <!--</v-container>-->
+                                <!--</v-form>-->
+                            <!--</v-card>-->
+                        <!--</v-flex>-->
+                        <!--<v-flex d-flex>-->
+                            <!--<v-layout row>-->
+                                <!--<v-flex d-flex>-->
+                                    <!--<v-card light color="dark">-->
+                                        <!--<v-subheader>Loan Form</v-subheader>-->
+                                        <!--<v-form>-->
+                                            <!--<v-container class="pt-0">-->
+                                                <!--<v-layout row wrap>-->
+                                                    <!--<v-flex d-flex>-->
+                                                        <!--<v-text-field-->
+                                                            <!--label="Loan Number"-->
+                                                            <!--disabled-->
+                                                            <!--v-model="loanNo"-->
+                                                        <!--&gt;</v-text-field>-->
+                                                    <!--</v-flex>-->
+                                                <!--</v-layout>-->
+                                                <!--<v-layout row wrap>-->
+                                                    <!--<v-flex d-flex>-->
+                                                        <!--<v-menu-->
+                                                            <!--ref="menu2"-->
+                                                            <!--:close-on-content-click="false"-->
+                                                            <!--v-model="menu2"-->
+                                                            <!--:nudge-right="40"-->
+                                                            <!--:return-value.sync="startDate"-->
+                                                            <!--lazy-->
+                                                            <!--transition="scale-transition"-->
+                                                            <!--offset-y-->
+                                                            <!--full-width-->
+                                                            <!--min-width="290px"-->
+                                                        <!--&gt;-->
+                                                            <!--<v-text-field-->
+                                                                <!--slot="activator"-->
+                                                                <!--v-model="startDate"-->
+                                                                <!--prepend-icon="event"-->
+                                                                <!--readonly-->
+                                                                <!--label="Start Date"-->
+                                                            <!--&gt;</v-text-field>-->
+                                                            <!--<v-date-picker v-model="startDate" no-title scrollable>-->
+                                                                <!--<v-spacer></v-spacer>-->
+                                                                <!--<v-btn flat color="primary" @click="menu2 = false">-->
+                                                                    <!--Cancel-->
+                                                                <!--</v-btn>-->
+                                                                <!--<v-btn flat color="primary"-->
+                                                                       <!--@click="$refs.menu2.save(startDate)">OK-->
+                                                                <!--</v-btn>-->
+                                                            <!--</v-date-picker>-->
+                                                        <!--</v-menu>-->
+                                                    <!--</v-flex>-->
+                                                <!--</v-layout>-->
+                                                <!--<v-layout row wrap>-->
+                                                    <!--<v-radio-group v-model="dayCount" :mandatory="false" row>-->
+                                                        <!--<v-radio label="30 days" value="30" color="primary"></v-radio>-->
+                                                        <!--<v-radio label="60 days" value="60" color="primary"></v-radio>-->
+                                                        <!--<v-radio label="90 days" value="90" color="primary"></v-radio>-->
+                                                    <!--</v-radio-group>-->
+                                                <!--</v-layout>-->
+                                                <!--<v-layout row wrap>-->
+                                                    <!--<v-flex d-flex>-->
+                                                        <!--<v-text-field-->
+                                                            <!--label="End Date"-->
+                                                            <!--disabled-->
+                                                            <!--v-model="endDate"-->
+                                                        <!--&gt;</v-text-field>-->
+                                                    <!--</v-flex>-->
+                                                <!--</v-layout>-->
+                                                <!--<v-layout row wrap>-->
+                                                    <!--<v-flex d-flex>-->
+                                                        <!--<v-select-->
+                                                            <!--color="light"-->
+                                                            <!--label="sales Rep"-->
+                                                            <!--:items="salesRepNames">-->
+                                                        <!--</v-select>-->
+                                                    <!--</v-flex>-->
+                                                <!--</v-layout>-->
+                                                <!--<v-layout row wrap>-->
+                                                    <!--<v-flex d-flex>-->
+                                                        <!--<v-text-field-->
+                                                            <!--label="Commission(%)"-->
+                                                            <!--v-model="commission"-->
+                                                        <!--&gt;</v-text-field>-->
+                                                    <!--</v-flex>-->
+                                                    <!--<v-flex d-flex>-->
+                                                        <!--<v-text-field-->
+                                                            <!--label="Commission Amount"-->
+                                                            <!--v-model="commAmount"-->
+                                                        <!--&gt;</v-text-field>-->
+                                                    <!--</v-flex>-->
+                                                <!--</v-layout>-->
+                                                <!--<v-layout row wrap>-->
+                                                    <!--<v-flex d-flex>-->
+                                                        <!--<v-select-->
+                                                            <!--color="light"-->
+                                                            <!--label="Type"-->
+                                                            <!--:items="types">-->
+                                                        <!--</v-select>-->
+                                                    <!--</v-flex>-->
+                                                <!--</v-layout>-->
+                                                <!--<v-layout row wrap>-->
+                                                    <!--<v-flex d-flex>-->
+                                                        <!--<v-text-field-->
+                                                            <!--label="Loan Amount"-->
+                                                            <!--v-model="loanAmount"-->
+                                                        <!--&gt;</v-text-field>-->
+                                                    <!--</v-flex>-->
+                                                <!--</v-layout>-->
+                                                <!--<v-layout row wrap>-->
+                                                    <!--<v-flex d-flex>-->
+                                                        <!--<v-text-field-->
+                                                            <!--label="Loan Interest %"-->
+                                                            <!--v-model="loanInterest"-->
+                                                        <!--&gt;</v-text-field>-->
+                                                    <!--</v-flex>-->
+                                                <!--</v-layout>-->
+                                                <!--<v-layout row wrap>-->
+                                                    <!--<v-flex d-flex>-->
+                                                        <!--<v-text-field-->
+                                                            <!--label="Days"-->
+                                                            <!--v-model="loanDays"-->
+                                                        <!--&gt;</v-text-field>-->
+                                                    <!--</v-flex>-->
+                                                <!--</v-layout>-->
+                                                <!--<v-layout row wrap>-->
+                                                    <!--<v-flex d-flex>-->
+                                                        <!--<v-text-field-->
+                                                            <!--label="Payment Installment"-->
+                                                            <!--v-model="paymentInstallment"-->
+                                                        <!--&gt;</v-text-field>-->
+                                                    <!--</v-flex>-->
+                                                <!--</v-layout>-->
+                                                <!--<v-layout row wrap>-->
+                                                    <!--<v-flex d-flex>-->
+                                                        <!--<v-text-field-->
+                                                            <!--label="Total Loan"-->
+                                                            <!--v-model="totalLoan"-->
+                                                        <!--&gt;</v-text-field>-->
+                                                    <!--</v-flex>-->
+                                                <!--</v-layout>-->
+                                            <!--</v-container>-->
+                                        <!--</v-form>-->
+                                    <!--</v-card>-->
+                                <!--</v-flex>-->
+                            <!--</v-layout>-->
+                        <!--</v-flex>-->
+                    <!--</v-layout>-->
+                <!--</v-flex>-->
+                <!--<v-flex d-flex xs12 sm7 md7>-->
+                    <!--<v-layout column wrap>-->
+                        <!--<v-flex d-flex>-->
+                            <!--<v-card color="dark" light>-->
+                                <!--<v-subheader>Loans</v-subheader>-->
+                                <!--<v-data-table :headers="headers" :items="loans" class="elevation-1">-->
+                                    <!--<template slot="items" slot-scope="props">-->
+                                        <!--<td>{{ props.item.no }}</td>-->
+                                        <!--<td>{{ props.item.amount }}</td>-->
+                                        <!--<td>{{ props.item.interest }}</td>-->
+                                        <!--<td>{{ props.item.daysCount }}</td>-->
+                                        <!--<td>{{ props.item.installments }}</td>-->
+                                        <!--<td>{{ props.item.total }}</td>-->
+                                        <!--<td>{{ props.item.due }}</td>-->
+                                    <!--</template>-->
+                                    <!--<template slot="no-data">-->
+                                        <!--<v-alert :value="true" color="error" icon="warning">-->
+                                            <!--Sorry, nothing to display here :(-->
+                                        <!--</v-alert>-->
+                                    <!--</template>-->
+                                <!--</v-data-table>-->
+                            <!--</v-card>-->
+                        <!--</v-flex>-->
+                    <!--</v-layout>-->
+                <!--</v-flex>-->
+            <!--</v-layout>-->
         </v-container>
     </v-app>
 </template>
@@ -210,6 +394,9 @@
         name: "CustomerLoanComponent",
         data() {
             return {
+                labelCustomerLoan: "Customer Loan",
+                labelLoanDetails: "Existing Loan Details",
+                labelLoans: "Existing Loans",
                 customerNo: 0,
                 customerName: "",
                 rules: {
@@ -356,7 +543,13 @@
                 loanInterest: 6,
                 loanDays: 30,
                 paymentInstallment: 400,
-                totalLoan: 25000
+                totalLoan: 25000,
+                search: [],
+                durations: [
+                    30,
+                    60,
+                    90
+                ]
             }
         },
         mounted() {
