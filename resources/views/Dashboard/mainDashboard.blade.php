@@ -8,6 +8,7 @@
         <div id="app">
             <layout></layout>
             <notifications group="auth" style="font-family: Verdana;"></notifications>
+            <notifications group="general"></notifications>
             <vue-progress-bar></vue-progress-bar>
         </div>
         <script src="{{ asset('js/app.js') }}"></script>
