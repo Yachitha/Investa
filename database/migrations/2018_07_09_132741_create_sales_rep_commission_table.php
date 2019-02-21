@@ -22,6 +22,7 @@ class CreateSalesRepCommissionTable extends Migration
             $table->integer ('cash_book_id')->nullable();
             /** @noinspection PhpUndefinedMethodInspection */
             $table->integer ('bank_book_id')->nullable();
+            $table->integer('loan_id');
             $table->timestamps();
         });
     }
