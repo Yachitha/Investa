@@ -46,8 +46,6 @@ class UserController extends Controller
         $addLine1 = $request->addLine1;
         $addLine2 = $request->addLine2;
         $city = $request->city;
-        $commission_id = $request->commission_id;
-        $calender_id = $request->calender_id;
         $role_id = $request->role_id;
         $route_id = $request->route_id;
 
@@ -77,8 +75,6 @@ class UserController extends Controller
                 'addLine2'=>$addLine2,
                 'role_id' =>$role_id,
                 'city'=>$city,
-                'commission_id'=>$commission_id,
-                'calendar_id'=>$calender_id,
                 'route_id'=>$route_id
             ]);
 
