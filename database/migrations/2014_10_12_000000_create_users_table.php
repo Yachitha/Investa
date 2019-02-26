@@ -24,10 +24,6 @@ class CreateUsersTable extends Migration
             $table->string ('addLine1');
             $table->string ('addLine2');
             $table->string ('city');
-            /** @noinspection PhpUndefinedMethodInspection */
-            $table->integer ('commission_id')->nullable();
-            /** @noinspection PhpUndefinedMethodInspection */
-            $table->integer ('calendar_id')->nullable();
             $table->integer ('role_id');
             /** @noinspection PhpUndefinedMethodInspection */
             $table->integer ('route_id')->nullable();

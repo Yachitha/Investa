@@ -94,6 +94,10 @@ Route::post('/addCustomerToDb', 'Customers\CustomerDashboardController@addCustom
 
 Route::get('/getCustomerList', 'Customers\CustomerListController@getCustomerList');
 
+Route::post('/getLoanDetailsForCustomer','Loans\CustomerLoanController@getLoanDetailsForCustomer');
+
+Route::get('/getLoanNumber','Loans\CustomerLoanController@getLoanNumber');
+
 Route::get('{any}', function () {
     return view('Dashboard.mainDashboard');
 })->where('any','.*');

@@ -1,3 +1,4 @@
+<!--suppress JSUnresolvedVariable -->
 <template>
     <v-app>
         <v-container fluid grid-list-md>
@@ -12,15 +13,20 @@
                                     </v-list-tile-title>
                                 </v-list-tile-content>
                                 <v-layout align-center justify-end>
-                                    <v-flex sm8 md8 offset-sm1>
+                                    <v-flex sm7 md7 offset-sm1>
                                         <v-text-field
                                             v-model="search"
-                                            append-icon="search"
                                             label="Search Customer by Name or Number"
                                             color="white"
                                             light
                                             hide-details
+                                            @keydown="searchKeyListener"
                                         ></v-text-field>
+                                    </v-flex>
+                                    <v-flex sm1 md1>
+                                        <v-btn slot="activator" dark icon @click="searchDetails">
+                                            <v-icon>search</v-icon>
+                                        </v-btn>
                                     </v-flex>
                                 </v-layout>
                             </v-list-tile>
@@ -33,7 +39,10 @@
                     <v-card color="dark" light>
                         <v-card-title>
                             <span class="subheading">{{ labelLoanDetails }}</span>
+                            <v-spacer></v-spacer>
+                            <v-btn dark color="primary" @click="newLoan">New Loan</v-btn>
                         </v-card-title>
+                        <v-divider light></v-divider>
                         <v-card-text>
                             <v-container fluid grid-list-md class="pt-0 mr-0 ml-0">
                                 <v-layout wrap>
@@ -56,6 +65,7 @@
                                             offset-y
                                             full-width
                                             min-width="290px"
+                                            :disabled="isDisabled"
                                         >
                                             <v-text-field
                                                 slot="activator"
@@ -63,6 +73,7 @@
                                                 prepend-icon="event"
                                                 readonly
                                                 label="Start Date"
+                                                :disabled="isDisabled"
                                             ></v-text-field>
                                             <v-date-picker v-model="startDate" no-title scrollable>
                                                 <v-spacer></v-spacer>
@@ -79,20 +90,19 @@
                                         <v-select
                                             color="light"
                                             label="Select Duration"
-                                            :items="durations">
+                                            :disabled="isDisabled"
+                                            :items="durations"
+                                            item-text="id"
+                                            item-value="id"
+                                            v-model="selectedDuration">
                                         </v-select>
-                                        <!--<v-radio-group v-model="dayCount" :mandatory="false" row>-->
-                                        <!--<v-radio label="30 days" value="30" color="primary"></v-radio>-->
-                                        <!--<v-radio label="60 days" value="60" color="primary"></v-radio>-->
-                                        <!--<v-radio label="90 days" value="90" color="primary"></v-radio>-->
-                                        <!--</v-radio-group>-->
                                     </v-flex>
                                     <v-flex xs6 sm3 md3>
                                         <v-flex d-flex>
                                             <v-text-field
                                                 label="End Date"
-                                                disabled
                                                 v-model="endDate"
+                                                disabled
                                             ></v-text-field>
                                         </v-flex>
                                     </v-flex>
@@ -100,37 +110,47 @@
                                         <v-select
                                             color="light"
                                             label="sales Rep"
-                                            :items="salesRepNames">
+                                            :disabled="isDisabled"
+                                            :items="salesRepNames"
+                                            v-model="selectedSalesRep">
                                         </v-select>
                                     </v-flex>
                                     <v-flex xs6 sm2 md2>
                                         <v-text-field
                                             label="Commission(%)"
                                             v-model="commission"
+                                            :disabled="isDisabled"
                                         ></v-text-field>
                                     </v-flex>
                                     <v-flex xs6 sm2 md2>
                                         <v-text-field
                                             label="Commission Amount"
                                             v-model="commAmount"
+                                            :disabled="isDisabled"
                                         ></v-text-field>
                                     </v-flex>
                                     <v-flex xs6 sm2 md2>
                                         <v-select
                                             color="light"
                                             label="Type"
-                                            :items="types">
+                                            :disabled="isDisabled"
+                                            :items="types"
+                                            item-value="id"
+                                            item-text="name"
+                                            v-model="selectedType">
                                         </v-select>
                                     </v-flex>
                                     <v-flex xs6 sm3 md3>
                                         <v-text-field
                                             label="Loan Amount"
+                                            :disabled="isDisabled"
                                             v-model="loanAmount"
                                         ></v-text-field>
                                     </v-flex>
                                     <v-flex xs6 sm3 md3>
                                         <v-text-field
                                             label="Loan Interest %"
+                                            :disabled="isDisabled"
                                             v-model="loanInterest"
                                         ></v-text-field>
                                     </v-flex>
@@ -138,23 +158,37 @@
                                         <v-text-field
                                             label="Days"
                                             v-model="loanDays"
+                                            :disabled="isDisabled"
                                         ></v-text-field>
                                     </v-flex>
                                     <v-flex xs6 sm3 md3>
                                         <v-text-field
                                             label="Payment Installment"
                                             v-model="paymentInstallment"
+                                            :disabled="isDisabled"
                                         ></v-text-field>
                                     </v-flex>
                                     <v-flex xs6 sm3 md3>
                                         <v-text-field
                                             label="Total Loan"
                                             v-model="totalLoan"
+                                            :disabled="isDisabled"
                                         ></v-text-field>
+                                    </v-flex>
+                                    <v-flex d-flex>
+                                        <v-layout justify-end>
+                                            <v-btn dark outline color="primary" v-show="showCancelBtn">Cancel</v-btn>
+                                            <v-btn dark color="primary" v-show="showSaveBtn">Save</v-btn>
+                                        </v-layout>
                                     </v-flex>
                                 </v-layout>
                             </v-container>
                         </v-card-text>
+                        <v-divider light></v-divider>
+                        <v-card-actions>
+                            <v-btn dark color="orange" @click="editLoan">Edit</v-btn>
+                            <v-btn dark color="red">Delete</v-btn>
+                        </v-card-actions>
                     </v-card>
                 </v-flex>
             </v-layout>
@@ -185,206 +219,23 @@
                     </v-card>
                 </v-flex>
             </v-layout>
-            <!--<v-layout row wrap>-->
-                <!--<v-flex d-flex xs12 sm5 md5>-->
-                    <!--<v-layout column wrap>-->
-                        <!--<v-flex d-flex>-->
-                            <!--<v-card light color="dark">-->
-                                <!--<v-subheader>{{ labelSearchCustomer }}</v-subheader>-->
-                                <!--<v-form>-->
-                                    <!--<v-container class="pt-0">-->
-                                        <!--<v-layout row wrap>-->
-
-                                            <!--<v-flex d-flex>-->
-                                                <!--<v-text-field-->
-                                                    <!--label="Customer No"-->
-                                                    <!--:rules="[rules.customerNo]"-->
-                                                <!--&gt;</v-text-field>-->
-                                            <!--</v-flex>-->
-
-                                            <!--<v-flex d-flex>-->
-                                                <!--<v-text-field-->
-                                                    <!--label="Customer Name"-->
-                                                    <!--:rules="[rules.customerName]"-->
-                                                <!--&gt;</v-text-field>-->
-                                            <!--</v-flex>-->
-
-                                        <!--</v-layout>-->
-                                    <!--</v-container>-->
-                                <!--</v-form>-->
-                            <!--</v-card>-->
-                        <!--</v-flex>-->
-                        <!--<v-flex d-flex>-->
-                            <!--<v-layout row>-->
-                                <!--<v-flex d-flex>-->
-                                    <!--<v-card light color="dark">-->
-                                        <!--<v-subheader>Loan Form</v-subheader>-->
-                                        <!--<v-form>-->
-                                            <!--<v-container class="pt-0">-->
-                                                <!--<v-layout row wrap>-->
-                                                    <!--<v-flex d-flex>-->
-                                                        <!--<v-text-field-->
-                                                            <!--label="Loan Number"-->
-                                                            <!--disabled-->
-                                                            <!--v-model="loanNo"-->
-                                                        <!--&gt;</v-text-field>-->
-                                                    <!--</v-flex>-->
-                                                <!--</v-layout>-->
-                                                <!--<v-layout row wrap>-->
-                                                    <!--<v-flex d-flex>-->
-                                                        <!--<v-menu-->
-                                                            <!--ref="menu2"-->
-                                                            <!--:close-on-content-click="false"-->
-                                                            <!--v-model="menu2"-->
-                                                            <!--:nudge-right="40"-->
-                                                            <!--:return-value.sync="startDate"-->
-                                                            <!--lazy-->
-                                                            <!--transition="scale-transition"-->
-                                                            <!--offset-y-->
-                                                            <!--full-width-->
-                                                            <!--min-width="290px"-->
-                                                        <!--&gt;-->
-                                                            <!--<v-text-field-->
-                                                                <!--slot="activator"-->
-                                                                <!--v-model="startDate"-->
-                                                                <!--prepend-icon="event"-->
-                                                                <!--readonly-->
-                                                                <!--label="Start Date"-->
-                                                            <!--&gt;</v-text-field>-->
-                                                            <!--<v-date-picker v-model="startDate" no-title scrollable>-->
-                                                                <!--<v-spacer></v-spacer>-->
-                                                                <!--<v-btn flat color="primary" @click="menu2 = false">-->
-                                                                    <!--Cancel-->
-                                                                <!--</v-btn>-->
-                                                                <!--<v-btn flat color="primary"-->
-                                                                       <!--@click="$refs.menu2.save(startDate)">OK-->
-                                                                <!--</v-btn>-->
-                                                            <!--</v-date-picker>-->
-                                                        <!--</v-menu>-->
-                                                    <!--</v-flex>-->
-                                                <!--</v-layout>-->
-                                                <!--<v-layout row wrap>-->
-                                                    <!--<v-radio-group v-model="dayCount" :mandatory="false" row>-->
-                                                        <!--<v-radio label="30 days" value="30" color="primary"></v-radio>-->
-                                                        <!--<v-radio label="60 days" value="60" color="primary"></v-radio>-->
-                                                        <!--<v-radio label="90 days" value="90" color="primary"></v-radio>-->
-                                                    <!--</v-radio-group>-->
-                                                <!--</v-layout>-->
-                                                <!--<v-layout row wrap>-->
-                                                    <!--<v-flex d-flex>-->
-                                                        <!--<v-text-field-->
-                                                            <!--label="End Date"-->
-                                                            <!--disabled-->
-                                                            <!--v-model="endDate"-->
-                                                        <!--&gt;</v-text-field>-->
-                                                    <!--</v-flex>-->
-                                                <!--</v-layout>-->
-                                                <!--<v-layout row wrap>-->
-                                                    <!--<v-flex d-flex>-->
-                                                        <!--<v-select-->
-                                                            <!--color="light"-->
-                                                            <!--label="sales Rep"-->
-                                                            <!--:items="salesRepNames">-->
-                                                        <!--</v-select>-->
-                                                    <!--</v-flex>-->
-                                                <!--</v-layout>-->
-                                                <!--<v-layout row wrap>-->
-                                                    <!--<v-flex d-flex>-->
-                                                        <!--<v-text-field-->
-                                                            <!--label="Commission(%)"-->
-                                                            <!--v-model="commission"-->
-                                                        <!--&gt;</v-text-field>-->
-                                                    <!--</v-flex>-->
-                                                    <!--<v-flex d-flex>-->
-                                                        <!--<v-text-field-->
-                                                            <!--label="Commission Amount"-->
-                                                            <!--v-model="commAmount"-->
-                                                        <!--&gt;</v-text-field>-->
-                                                    <!--</v-flex>-->
-                                                <!--</v-layout>-->
-                                                <!--<v-layout row wrap>-->
-                                                    <!--<v-flex d-flex>-->
-                                                        <!--<v-select-->
-                                                            <!--color="light"-->
-                                                            <!--label="Type"-->
-                                                            <!--:items="types">-->
-                                                        <!--</v-select>-->
-                                                    <!--</v-flex>-->
-                                                <!--</v-layout>-->
-                                                <!--<v-layout row wrap>-->
-                                                    <!--<v-flex d-flex>-->
-                                                        <!--<v-text-field-->
-                                                            <!--label="Loan Amount"-->
-                                                            <!--v-model="loanAmount"-->
-                                                        <!--&gt;</v-text-field>-->
-                                                    <!--</v-flex>-->
-                                                <!--</v-layout>-->
-                                                <!--<v-layout row wrap>-->
-                                                    <!--<v-flex d-flex>-->
-                                                        <!--<v-text-field-->
-                                                            <!--label="Loan Interest %"-->
-                                                            <!--v-model="loanInterest"-->
-                                                        <!--&gt;</v-text-field>-->
-                                                    <!--</v-flex>-->
-                                                <!--</v-layout>-->
-                                                <!--<v-layout row wrap>-->
-                                                    <!--<v-flex d-flex>-->
-                                                        <!--<v-text-field-->
-                                                            <!--label="Days"-->
-                                                            <!--v-model="loanDays"-->
-                                                        <!--&gt;</v-text-field>-->
-                                                    <!--</v-flex>-->
-                                                <!--</v-layout>-->
-                                                <!--<v-layout row wrap>-->
-                                                    <!--<v-flex d-flex>-->
-                                                        <!--<v-text-field-->
-                                                            <!--label="Payment Installment"-->
-                                                            <!--v-model="paymentInstallment"-->
-                                                        <!--&gt;</v-text-field>-->
-                                                    <!--</v-flex>-->
-                                                <!--</v-layout>-->
-                                                <!--<v-layout row wrap>-->
-                                                    <!--<v-flex d-flex>-->
-                                                        <!--<v-text-field-->
-                                                            <!--label="Total Loan"-->
-                                                            <!--v-model="totalLoan"-->
-                                                        <!--&gt;</v-text-field>-->
-                                                    <!--</v-flex>-->
-                                                <!--</v-layout>-->
-                                            <!--</v-container>-->
-                                        <!--</v-form>-->
-                                    <!--</v-card>-->
-                                <!--</v-flex>-->
-                            <!--</v-layout>-->
-                        <!--</v-flex>-->
-                    <!--</v-layout>-->
-                <!--</v-flex>-->
-                <!--<v-flex d-flex xs12 sm7 md7>-->
-                    <!--<v-layout column wrap>-->
-                        <!--<v-flex d-flex>-->
-                            <!--<v-card color="dark" light>-->
-                                <!--<v-subheader>Loans</v-subheader>-->
-                                <!--<v-data-table :headers="headers" :items="loans" class="elevation-1">-->
-                                    <!--<template slot="items" slot-scope="props">-->
-                                        <!--<td>{{ props.item.no }}</td>-->
-                                        <!--<td>{{ props.item.amount }}</td>-->
-                                        <!--<td>{{ props.item.interest }}</td>-->
-                                        <!--<td>{{ props.item.daysCount }}</td>-->
-                                        <!--<td>{{ props.item.installments }}</td>-->
-                                        <!--<td>{{ props.item.total }}</td>-->
-                                        <!--<td>{{ props.item.due }}</td>-->
-                                    <!--</template>-->
-                                    <!--<template slot="no-data">-->
-                                        <!--<v-alert :value="true" color="error" icon="warning">-->
-                                            <!--Sorry, nothing to display here :(-->
-                                        <!--</v-alert>-->
-                                    <!--</template>-->
-                                <!--</v-data-table>-->
-                            <!--</v-card>-->
-                        <!--</v-flex>-->
-                    <!--</v-layout>-->
-                <!--</v-flex>-->
-            <!--</v-layout>-->
+            <v-layout row justify-center>
+                <v-dialog v-model="dialog" max-width="400" persistent>
+                    <v-card>
+                        <v-card-title class="subheading">
+                            {{ dialogTitle }}
+                        </v-card-title>
+                        <v-divider light></v-divider>
+                        <v-card-text>
+                            {{ dialogMessage }}
+                        </v-card-text>
+                        <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn color="green darken-1" @click="dialog=false" flat="flat">Ok</v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </v-dialog>
+            </v-layout>
         </v-container>
     </v-app>
 </template>
@@ -397,7 +248,7 @@
                 labelCustomerLoan: "Customer Loan",
                 labelLoanDetails: "Existing Loan Details",
                 labelLoans: "Existing Loans",
-                customerNo: 0,
+                customerNo: '',
                 customerName: "",
                 rules: {
                     required: value => !!value || 'Required.',
@@ -425,7 +276,7 @@
                         value: 'amount'
                     },
                     {
-                        text: 'Interest',
+                        text: 'Interest(%)',
                         align: 'left',
                         sortable: false,
                         value: 'interest'
@@ -455,105 +306,272 @@
                         value: 'due'
                     }
                 ],
-                loans: [
-                    {
-                        value: false,
-                        no: '100021',
-                        amount: 1000,
-                        interest: 2,
-                        daysCount: 15,
-                        installments: 6,
-                        total: 50000,
-                        due: 15000
-                    },
-                    {
-                        value: false,
-                        no: '100021',
-                        amount: 1000,
-                        interest: 2,
-                        daysCount: 15,
-                        installments: 6,
-                        total: 50000,
-                        due: 15000
-                    },
-                    {
-                        value: false,
-                        no: '100021',
-                        amount: 1000,
-                        interest: 2,
-                        daysCount: 15,
-                        installments: 6,
-                        total: 50000,
-                        due: 15000
-                    },
-                    {
-                        value: false,
-                        no: '100021',
-                        amount: 1000,
-                        interest: 2,
-                        daysCount: 15,
-                        installments: 6,
-                        total: 50000,
-                        due: 15000
-                    },
-                    {
-                        value: false,
-                        no: '100021',
-                        amount: 1000,
-                        interest: 2,
-                        daysCount: 15,
-                        installments: 6,
-                        total: 50000,
-                        due: 15000
-                    },
-                    {
-                        value: false,
-                        no: '100021',
-                        amount: 1000,
-                        interest: 2,
-                        daysCount: 15,
-                        installments: 6,
-                        total: 50000,
-                        due: 15000
-                    }
-                ],
-                loanNo: 709,
+                loans: [],
+                loanNo: '',
                 startDate: new Date().toISOString().substr(0, 10),
                 menu2: false,
                 dayCount: '30',
                 endDate: new Date().toISOString().substr(0, 10),
-                salesRepNames: [
-                    "Raveendra",
-                    "Madushanka",
-                    "sampath",
-                    "Asanka",
-                    "sahan",
-                    "nuwan",
-                    "gamege",
-                    "sameera"
+                salesRepNames: [],
+                selectedSalesRep: [
+                    {
+                        id: '',
+                        name: ''
+                    }
                 ],
-                commission: 2,
-                commAmount: 400,
+                commission: '',
+                commAmount: '',
                 types: [
-                    "cash",
-                    "bank",
-                    "both"
+                    {
+                        id: '1',
+                        name: 'cash'
+                    },
+                    {
+                        id: '2',
+                        name: 'bank'
+                    },
+                    {
+                        id: '3',
+                        name: 'both'
+                    },
                 ],
-                loanAmount: 20000,
-                loanInterest: 6,
-                loanDays: 30,
-                paymentInstallment: 400,
-                totalLoan: 25000,
-                search: [],
+                selectedType: {
+                    id: '1',
+                    name: 'cash'
+                },
+                loanAmount: '',
+                loanInterest: '',
+                loanDays: '',
+                paymentInstallment: '',
+                totalLoan: '',
+                search: '',
                 durations: [
-                    30,
-                    60,
-                    90
-                ]
+                    {
+                        id: '30'
+                    },
+                    {
+                        id: '60'
+                    },
+                    {
+                        id: '100'
+                    },
+                ],
+                selectedDuration: {
+                    id: ''
+                },
+                dataReceived: false,
+                isDisabled: false,
+                showSaveBtn: false,
+                showCancelBtn: false,
+                dialog: false,
+                dialogTitle:'',
+                dialogMessage: ''
+            }
+        },
+        methods: {
+            searchDetails() {
+                console.log(this.search);
+                this.getData()
+            },
+            getData() {
+                this.$Progress.start();
+                axios.defaults.headers.common = {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                };
+                axios.post('/getLoanDetailsForCustomer', {
+                    parameter: this.search
+                }).then((response) => {
+                    if (response.status === 200) {
+                        if (response.data.error) {
+                            this.$Progress.fail();
+                            this.$notify({
+                                group: 'auth',
+                                title: 'Error',
+                                type: 'error',
+                                text: response.data.message,
+                                fontsize: '20px'
+                            });
+                        } else {
+                            this.$Progress.finish();
+                            this.dataReceived = true;
+                            this.checkLoansEmpty(response.data.loans);
+                        }
+
+                    }
+                }).catch((error) => {
+                    this.$Progress.fail();
+                    console.log(error);
+                    this.$notify({
+                        group: 'auth',
+                        title: 'Error',
+                        type: 'error',
+                        text: error,
+                        fontsize: '20px'
+                    });
+                });
+            },
+            checkLoansEmpty(loans) {
+                if (loans.length === 0) {
+                    this.$notify({
+                        group: 'general',
+                        title: 'Error',
+                        type: 'error',
+                        text: "No Loans available",
+                        fontsize: '20px'
+                    });
+                    //create pop up function call
+                } else {
+                    this.populateLoanData(loans);
+                }
+            },
+            populateLoanData(loans) {
+                this.flushLoanData();
+                this.populateInTable(loans);
+                this.populateInExistingLoan(loans[loans.length-1]);
+            },
+            populateInTable(loans) {
+                console.log(loans);
+                loans.forEach((loan)=>{
+                    this.loans.push({
+                        no: loan.loan_no,
+                        amount: loan.loan_amount,
+                        interest: loan.interest_rate,
+                        daysCount: loan.day_count,
+                        installments: loan.no_of_installments,
+                        total: loan.total_loan,
+                        due: loan.due_payment
+                    })
+                });
+            },
+            populateInExistingLoan(loan) {
+                this.loanNo = loan.loan_no;
+                this.startDate = new Date(loan.start_date).toISOString().substr(0,10);
+                this.endDate = new Date(loan.end_date).toISOString().substr(0,10);
+                this.setDuration(loan.duration);
+                this.loanAmount = loan.loan_amount;
+                this.loanInterest = loan.interest_rate;
+                this.paymentInstallment = loan.installment_amount;
+                this.loanDays = loan.duration;
+
+            },
+            flushLoanData () {
+                this.loans.splice(0,this.loans.length);
+            },
+            setDuration(duration) {
+                console.log(duration);
+                this.selectedDuration.id = duration;
+                console.log(this.selectedDuration.id);
+            },
+            disableFields() {
+                this.isDisabled = true;
+            },
+            newLoan() {
+                if(this.dataReceived) {
+                    this.flushExistingLoanData();
+                    this.getLoanNumber();
+                    this.enableFields();
+                    this.showBtns();
+                } else {
+                    this.$notify({
+                        group: 'general',
+                        title: 'Error',
+                        type: 'error',
+                        text: "Search Customer First",
+                        fontsize: '20px'
+                    });
+                    this.showDialog("No Customer Specified", "You do not selected any customer to give a Loan");
+                }
+            },
+            flushExistingLoanData() {
+                this.startDate = new Date().toISOString().substr(0,10);
+                this.selectedDuration.id = '';
+                this.endDate = new Date().toISOString().substr(0,10);
+                this.selectedSalesRep.id = '';
+                this.selectedSalesRep.name = '';
+                this.commission = '';
+                this.commAmount = '';
+                this.selectedType.id = '1';
+                this.selectedType.name = 'cash';
+                this.loanAmount = '';
+                this.loanInterest='';
+                this.loanDays = '';
+                this.paymentInstallment = '';
+                this.totalLoan = '';
+            },
+            enableFields() {
+                this.isDisabled = false;
+            },
+            showBtns() {
+                this.showSaveBtn = true;
+                this.showCancelBtn = true;
+            },
+            editLoan() {
+                if(this.dataReceived) {
+                    this.enableFields();
+                    this.showBtns();
+                } else {
+                    this.$notify({
+                        group: 'general',
+                        title: 'Error',
+                        type: 'error',
+                        text: "Search Customer First",
+                        fontsize: '20px'
+                    });
+                    this.showDialog("No Customer Specified", "You do not selected any customer to edit");
+                }
+            },
+            showDialog (title, message) {
+                this.dialogTitle = title;
+                this.dialogMessage = message;
+                this.dialog = true;
+            },
+            getLoanNumber() {
+                axios.defaults.headers.common = {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                };
+                axios.get('/getLoanNumber').then((response) => {
+                    if (response.status === 200) {
+                        if (response.data.error) {
+                            this.$notify({
+                                group: 'auth',
+                                title: 'Error',
+                                type: 'error',
+                                text: response.data.message,
+                                fontsize: '20px'
+                            });
+                        } else {
+                            console.log(response.data.loan_no);
+                            this.populateLoanNumber(response.data.loan_no);
+                        }
+
+                    }
+                }).catch((error) => {
+                    console.log(error);
+                    this.$notify({
+                        group: 'auth',
+                        title: 'Error',
+                        type: 'error',
+                        text: error,
+                        fontsize: '20px'
+                    });
+                });
+            },
+            populateLoanNumber(number) {
+                this.loanNo = number;
+            },
+            searchKeyListener(e) {
+                if (e.keyCode === 13) {
+                    this.searchDetails();
+                }
             }
         },
         mounted() {
-            console.log(this.dayCount)
+            console.log(this.dayCount);
+        },
+        created() {
+            this.disableFields();
         }
     }
 </script>

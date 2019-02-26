@@ -176,7 +176,9 @@
                             </td>
                         </template>
                         <template slot="no-data">
-                            <v-btn color="primary" @click="initialize">Reset</v-btn>
+                            <v-alert :value="true" color="error" icon="warning">
+                                Sorry, nothing to display here :(
+                            </v-alert>
                         </template>
                     </v-data-table>
                 </v-flex>
