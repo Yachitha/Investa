@@ -25,5 +25,7 @@ Route::group(['middleware'=>'api'],function (){
     Route::post ('/editCustomerRepayments','api\RepaymentController@editCustomerRepayment');
     Route::post ('/createPocketMoney','api\PocketMoneyController@createPocketMoneyRow');
     Route::post('/addCustomerToDb', 'Customers\CustomerDashboardController@addCustomer');
+    Route::post('/calculateEndDate','Loans\CustomerLoanController@calculateEndDate');
+    Route::post('/addCustomerLoan','Loans\CustomerLoanController@addCustomerLoan');
 });
 

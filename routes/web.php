@@ -98,6 +98,8 @@ Route::post('/getLoanDetailsForCustomer','Loans\CustomerLoanController@getLoanDe
 
 Route::get('/getLoanNumber','Loans\CustomerLoanController@getLoanNumber');
 
+Route::post('/calculateEndDate','Loans\CustomerLoanController@calculateEndDate');
+
 Route::get('{any}', function () {
     return view('Dashboard.mainDashboard');
 })->where('any','.*');
