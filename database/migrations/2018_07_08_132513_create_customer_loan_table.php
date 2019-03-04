@@ -25,8 +25,10 @@ class CreateCustomerLoanTable extends Migration
             $table->date ('end_date');
             $table->integer ('duration');
             $table->integer ('customer_id');
-            $table->integer ('cash_book_id');
-            $table->integer ('bank_book_id');
+            /** @noinspection PhpUndefinedMethodInspection */
+            $table->integer ('cash_book_id')->nullable();
+            /** @noinspection PhpUndefinedMethodInspection */
+            $table->integer ('bank_book_id')->nullable();
             $table->timestamps();
         });
     }

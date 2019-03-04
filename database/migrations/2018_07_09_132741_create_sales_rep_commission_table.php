@@ -18,10 +18,6 @@ class CreateSalesRepCommissionTable extends Migration
             $table->float ('commission_rate');
             $table->float ('commission_amount');
             $table->date('date');
-            /** @noinspection PhpUndefinedMethodInspection */
-            $table->integer ('cash_book_id')->nullable();
-            /** @noinspection PhpUndefinedMethodInspection */
-            $table->integer ('bank_book_id')->nullable();
             $table->integer('loan_id');
             $table->integer('user_id');
             $table->timestamps();
