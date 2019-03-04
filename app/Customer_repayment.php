@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property null cash_book_id
  * @property mixed installment_count
  * @property mixed remaining_amount
+ * @property mixed loan_id
+ * @property mixed id
  */
 class Customer_repayment extends Model
 {
