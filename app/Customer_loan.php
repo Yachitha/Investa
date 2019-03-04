@@ -4,6 +4,9 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property mixed id
+ */
 class Customer_loan extends Model
 {
     protected $table = 'customer_loan';
@@ -17,5 +20,9 @@ class Customer_loan extends Model
 
     public function hasRepayment(){
         return $this->hasMany ('App\Customer_repayment','loan_id');
+    }
+
+    public function hasCommission() {
+        return $this->hasOne('App\SalesRepCommission','loan_id');
     }
 }
