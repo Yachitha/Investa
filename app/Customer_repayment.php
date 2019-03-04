@@ -5,7 +5,6 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property  loan_id
  * @property null bank_book_id
  * @property float amount
  * @property null cash_book_id
