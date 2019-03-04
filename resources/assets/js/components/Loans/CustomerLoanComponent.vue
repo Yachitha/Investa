@@ -94,7 +94,8 @@
                                             :items="durations"
                                             item-text="id"
                                             item-value="id"
-                                            v-model="selectedDuration">
+                                            v-model="selectedDuration"
+                                            @change="onDurationChange">
                                         </v-select>
                                     </v-flex>
                                     <v-flex xs6 sm3 md3>
@@ -112,6 +113,8 @@
                                             label="sales Rep"
                                             :disabled="isDisabled"
                                             :items="salesRepNames"
+                                            item-text="name"
+                                            item-value="id"
                                             v-model="selectedSalesRep">
                                         </v-select>
                                     </v-flex>
@@ -205,7 +208,7 @@
                                     <td>{{ props.item.amount }}</td>
                                     <td>{{ props.item.interest }}</td>
                                     <td>{{ props.item.daysCount }}</td>
-                                    <td>{{ props.item.installments }}</td>
+                                    <td>{{ props.item.installment }}</td>
                                     <td>{{ props.item.total }}</td>
                                     <td>{{ props.item.due }}</td>
                                 </template>
@@ -288,10 +291,10 @@
                         value: 'daysCount'
                     },
                     {
-                        text: 'Installments',
+                        text: 'Installment',
                         align: 'left',
                         sortable: false,
-                        value: 'installments'
+                        value: 'installment'
                     },
                     {
                         text: 'Total Loan',
@@ -357,8 +360,9 @@
                     },
                 ],
                 selectedDuration: {
-                    id: ''
+                    id: '30'
                 },
+                dueAmounts:[],
                 dataReceived: false,
                 isDisabled: false,
                 showSaveBtn: false,
@@ -396,6 +400,7 @@
                             this.$Progress.finish();
                             this.dataReceived = true;
                             this.checkLoansEmpty(response.data.loans);
+                            this.setSalesReps(response.data.salesReps);
                         }
 
                     }
@@ -408,6 +413,14 @@
                         type: 'error',
                         text: error,
                         fontsize: '20px'
+                    });
+                });
+            },
+            setSalesReps(salesReps) {
+                salesReps.forEach((salesRep)=>{
+                    this.salesRepNames.push({
+                        id: salesRep.id,
+                        name: salesRep.name
                     });
                 });
             },
@@ -437,11 +450,11 @@
                         no: loan.loan_no,
                         amount: loan.loan_amount,
                         interest: loan.interest_rate,
-                        daysCount: loan.day_count,
-                        installments: loan.no_of_installments,
-                        total: loan.total_loan,
-                        due: loan.due_payment
-                    })
+                        daysCount: loan.no_of_installments,
+                        installment: loan.installment_amount,
+                        total: loan.total_loan_amount,
+                        due: loan.due_amount
+                    });
                 });
             },
             populateInExistingLoan(loan) {
@@ -565,6 +578,47 @@
                 if (e.keyCode === 13) {
                     this.searchDetails();
                 }
+            },
+            onDurationChange() {
+                this.$Progress.start();
+                axios.defaults.headers.common = {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                };
+                axios.post('/calculateEndDate', {
+                    start_date: this.startDate,
+                    duration: this.selectedDuration
+                }).then((response) => {
+                    if (response.status === 200) {
+                        if (response.data.error) {
+                            this.$Progress.fail();
+                            this.$notify({
+                                group: 'auth',
+                                title: 'Error',
+                                type: 'error',
+                                text: response.data.message,
+                                fontsize: '20px'
+                            });
+                        } else {
+                            this.$Progress.finish();
+                            this.setEndDate(response.data.end_date);
+                        }
+
+                    }
+                }).catch((error) => {
+                    this.$Progress.fail();
+                    console.log(error);
+                    this.$notify({
+                        group: 'auth',
+                        title: 'Error',
+                        type: 'error',
+                        text: error,
+                        fontsize: '20px'
+                    });
+                });
+            },
+            setEndDate(end_date) {
+                this.endDate = new Date(end_date).toISOString().substr(0,10);
             }
         },
         mounted() {
