@@ -40,7 +40,7 @@ class CustomerLoanController
         } else {
             try {
                 $customer_id = DB::table('customer')->where('customer_no', '=', $request['parameter'])
-                    ->orWhere('name', '=', $request['parameter']);
+                    ->orWhere('name', '=', $request['parameter'])->select('id')->pluck('id')->first();
 
                 if ($customer_id == null) {
                     return response()->json([
@@ -50,11 +50,17 @@ class CustomerLoanController
 
                 } else {
                     $loans = DB::table('customer_loan')->where('customer_id', '=', $customer_id)->get();
+                    $salesReps = DB::table('users')->get();
+
+                    foreach ($loans as $loan) {
+                        $loan->due_amount = $this->getDueAmount($loan->id,$loan->total_loan_amount);
+                    }
 
                     return response()->json([
                         'error' => false,
                         'loans' => $loans,
-                        'customer_id' => $customer_id
+                        'customer_id' => $customer_id,
+                        'salesReps'=>$salesReps,
                     ]);
                 }
 
@@ -64,6 +70,21 @@ class CustomerLoanController
                     'message' => $e->getMessage()
                 ]);
             }
+        }
+    }
+
+    /**
+     * To get due_amount of a given loan
+     * @param $loan_id
+     * @param $totalLoan
+     * @return mixed|string
+     */
+    private function getDueAmount($loan_id, $totalLoan) {
+        try{
+            $totalPaid = DB::table('customer_loan_repayment')->where('loan_id','=',$loan_id)->sum('amount');
+            return $totalLoan-$totalPaid;
+        } catch (\Exception $e) {
+            return $e->getMessage();
         }
     }
 
