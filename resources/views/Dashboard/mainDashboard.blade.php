@@ -3,6 +3,7 @@
     <head>
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <title>Main Dashboard - Southern Property Developers</title>
+        <link rel="shortcut icon" type="image/x-icon" href="{{ asset('/spd.ico') }}"/>
     </head>
     <body>
         <div id="app">
