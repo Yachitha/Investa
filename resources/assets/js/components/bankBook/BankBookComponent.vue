@@ -69,7 +69,7 @@
                                         </v-menu>
                                     </v-flex>
                                     <v-flex sm1 pl-1 class="text-xs-center">
-                                        <v-btn slot="activator" dark icon @click="requestPasser">
+                                        <v-btn slot="activator" dark icon @click="getData">
                                             <v-icon>search</v-icon>
                                         </v-btn>
                                     </v-flex>
@@ -84,8 +84,8 @@
                             <template slot="items" slot-scope="props">
                                 <td>{{ props.item.date }}</td>
                                 <td>{{ props.item.description }}</td>
-                                <td>{{ props.item.cIn }}</td>
-                                <td>{{ props.item.cOut }}</td>
+                                <td>{{ props.item.deposit }}</td>
+                                <td>{{ props.item.withdraw }}</td>
                                 <td>{{ props.item.balance }}</td>
                             </template>
                             <template slot="no-data">
@@ -130,13 +130,13 @@
                         text: "Deposit",
                         sortable: false,
                         align: 'left',
-                        value: 'cIn'
+                        value: 'deposit'
                     },
                     {
                         text: "Withdraw",
                         sortable: false,
                         align: 'left',
-                        value: 'cOut'
+                        value: 'withdraw'
                     },
                     {
                         text: "Balance",
@@ -145,91 +145,60 @@
                         value: 'balance'
                     }
                 ],
-                records: [
-                    {
-                        value: false,
-                        date: '2019/01/01',
-                        description: "repayment by user 1",
-                        cIn: '1000',
-                        cOut: '0',
-                        balance: '1000'
-                    },
-                    {
-                        value: false,
-                        date: '2019/01/01',
-                        description: "repayment by user 1",
-                        cIn: '1000',
-                        cOut: '0',
-                        balance: '1000'
-                    },
-                    {
-                        value: false,
-                        date: '2019/01/01',
-                        description: "repayment by user 1",
-                        cIn: '1000',
-                        cOut: '0',
-                        balance: '1000'
-                    },
-                    {
-                        value: false,
-                        date: '2019/01/01',
-                        description: "repayment by user 1",
-                        cIn: '1000',
-                        cOut: '0',
-                        balance: '1000'
-                    },
-                    {
-                        value: false,
-                        date: '2019/01/01',
-                        description: "repayment by user 1",
-                        cIn: '1000',
-                        cOut: '0',
-                        balance: '1000'
-                    },
-                    {
-                        value: false,
-                        date: '2019/01/01',
-                        description: "repayment by user 1",
-                        cIn: '1000',
-                        cOut: '0',
-                        balance: '1000'
-                    },
-                    {
-                        value: false,
-                        date: '2019/01/01',
-                        description: "repayment by user 1",
-                        cIn: '1000',
-                        cOut: '0',
-                        balance: '1000'
-                    },
-                    {
-                        value: false,
-                        date: '2019/01/01',
-                        description: "repayment by user 1",
-                        cIn: '1000',
-                        cOut: '0',
-                        balance: '1000'
-                    },
-                    {
-                        value: false,
-                        date: '2019/01/01',
-                        description: "repayment by user 1",
-                        cIn: '1000',
-                        cOut: '0',
-                        balance: '1000'
-                    },
-                ]
+                records: []
             }
         },
         methods: {
-            requestPasser: function () {
-                if (this.setEndTimestamp > this.setStartTimestamp) {
-                    console.log(this.setStartTimestamp);
-                    console.log(this.setEndTimestamp);
-                    console.log("end date is grater than start date");
-                } else {
-                    console.log("end date is lower than start date");
-                }
+            getData () {
+                this.$Progress.start();
+                axios.defaults.headers.common = {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                };
+                axios.post('/getBankBookRecords', {
+                    start_date: this.startDate,
+                    end_date: this.endDate
+                }).then((response) => {
+                    console.log(response);
+                    if (response.status === 200) {
+                        if (response.data.error) {
+                            this.$Progress.fail();
+                            this.$notify({
+                                group: 'auth',
+                                title: 'Error',
+                                type: 'error',
+                                text: response.data.message,
+                                fontsize: '20px'
+                            });
+                        } else {
+                            this.$Progress.finish();
+                            this.flushDataTable();
+                            this.populateData(response.data.records);
+                        }
+                    }
+                }).catch((error) => {
+                    this.$notify({
+                        group: 'auth',
+                        title: 'Error',
+                        type: 'error',
+                        text: error,
+                        fontsize: '20px'
+                    });
+                });
+            },
+            populateData(bank_book_records) {
+                bank_book_records.forEach((record)=>{
+                    this.records.push({
+                        date: record.transaction_date,
+                        description: record.description,
+                        deposit: record.deposit,
+                        withdraw: record.withdraw,
+                        balance: record.balance
+                    });
+                });
+            },
+            flushDataTable() {
+                this.records.splice(0, this.records.length);
             }
         },
         computed: {
@@ -239,12 +208,15 @@
             setEndTimestamp: function () {
                 return this.endDate1.setHours(23,59,59,99);
             },
-            foramtDatePickerSDate() {
+            formatDatePickerSDate() {
                 return this.startDate1.toISOString().substr(0,10);
             },
             formatDatePickerEDate() {
                 return this.endDate1.toISOString().substr(0,10);
             }
+        },
+        created() {
+            this.getData();
         }
     }
 </script>

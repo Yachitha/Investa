@@ -1,37 +1,54 @@
 <template>
-    <div id="calendar">
-        <h1>Calendar</h1>
-        <calendar-view
-            :events="events"
-            :show-date="showDate"
-            @click-date="setClickDate"
-            slot="day"
-            class="theme-default holiday-us-traditional holiday-us-official">
-            <calendar-view-header
-                slot="header"
-                slot-scope="t"
-                :header-props="t.headerProps"
-                @input="setShowDate"/>
-        </calendar-view>
-        <v-layout row justify-center>
-            <v-dialog v-model="dialog" max-width="290">
-                <v-card>
-                    <v-card-title class="headline">
-                        Confirm Remove
-                    </v-card-title>
-                    <v-card-text>
-                        By confirming this date record will remove from the system
-                    </v-card-text>
-                    <v-card-actions>
-                        <v-spacer></v-spacer>
-                        <v-btn color="green darken-1" @click="setBackId" flat="flat">Not Confirm</v-btn>
-                        <v-btn color="red" @click="deleteDate" flat="flat">Confirm</v-btn>
-                    </v-card-actions>
-                </v-card>
-            </v-dialog>
-        </v-layout>
-    </div>
-
+    <v-app>
+        <v-container fluid>
+            <v-layout column wrap>
+                <v-flex xs12 sm12 md12>
+                    <v-card dark color="primary" class="text-lg-start">
+                        <v-card-actions>
+                            <v-list-tile class="grow">
+                                <v-list-tile-content>
+                                    <v-list-tile-title>
+                                        {{ compName }}
+                                    </v-list-tile-title>
+                                </v-list-tile-content>
+                            </v-list-tile>
+                        </v-card-actions>
+                    </v-card>
+                </v-flex>
+            </v-layout>
+            <div id="calendar">
+                <calendar-view
+                        :events="events"
+                        :show-date="showDate"
+                        @click-date="setClickDate"
+                        slot="day"
+                        class="theme-default holiday-us-traditional holiday-us-official">
+                    <calendar-view-header
+                            slot="header"
+                            slot-scope="t"
+                            :header-props="t.headerProps"
+                            @input="setShowDate"/>
+                </calendar-view>
+                <v-layout row justify-center>
+                    <v-dialog v-model="dialog" max-width="290">
+                        <v-card>
+                            <v-card-title class="headline">
+                                Confirm Remove
+                            </v-card-title>
+                            <v-card-text>
+                                By confirming this date record will remove from the system
+                            </v-card-text>
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn color="green darken-1" @click="setBackId" flat="flat">Not Confirm</v-btn>
+                                <v-btn color="red" @click="deleteDate" flat="flat">Confirm</v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </v-dialog>
+                </v-layout>
+            </div>
+        </v-container>
+    </v-app>
 </template>
 
 <script>
@@ -44,6 +61,7 @@
     export default {
         data() {
             return {
+                compName:"Calendar",
                 showDate: new Date(),
                 clickDate: new Date(),
                 newEventTitle: "",
@@ -248,5 +266,6 @@
         width: 90vw;
         margin-left: auto;
         margin-right: auto;
+        margin-top: 20px;
     }
 </style>

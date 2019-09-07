@@ -2,10 +2,10 @@
     <div id="container">
         <div id="left-wrapper">
             <div id="logo">
-                <img src="spd.png" alt="logo">
+                <img src="public/spd.png" alt="logo">
             </div>
             <div id="middle-img">
-                <img src="3.png" alt="description">
+                <img src="public/3.png" alt="description">
             </div>
             <div id="small-description">
                 <p>

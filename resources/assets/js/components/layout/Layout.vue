@@ -104,7 +104,7 @@
                         <v-icon>trending_up</v-icon>
                     </v-list-tile-action>
                     <v-list-tile-content>
-                        <v-list-tile-title>{{ labelIncome }}</v-list-tile-title>
+                        <router-link :to="{ name: 'Income' }">Income</router-link>
                     </v-list-tile-content>
                 </v-list-tile>
                 <v-list-tile>
@@ -112,7 +112,7 @@
                         <v-icon>trending_down</v-icon>
                     </v-list-tile-action>
                     <v-list-tile-content>
-                        <v-list-tile-title>{{ labelExpense }}</v-list-tile-title>
+                        <router-link :to="{ name: 'Expenses' }">Expenses</router-link>
                     </v-list-tile-content>
                 </v-list-tile>
                 <v-list-tile>
@@ -123,6 +123,23 @@
                         <v-list-tile-title>
                             <router-link :to="{ name: 'Calendar' }">Calendar</router-link>
                         </v-list-tile-title>
+                    </v-list-tile-content>
+                </v-list-tile>
+                <v-divider light></v-divider>
+                <v-list-tile>
+                    <v-list-tile-action>
+                        <v-icon>settings</v-icon>
+                    </v-list-tile-action>
+                    <v-list-tile-content>
+                        <router-link :to="{ name: 'Settings' }">Settings</router-link>
+                    </v-list-tile-content>
+                </v-list-tile>
+                <v-list-tile>
+                    <v-list-tile-action>
+                        <v-icon>assignment</v-icon>
+                    </v-list-tile-action>
+                    <v-list-tile-content>
+                        <router-link :to="{ name: 'DailySummary' }">Daily Summary</router-link>
                     </v-list-tile-content>
                 </v-list-tile>
             </v-list>
