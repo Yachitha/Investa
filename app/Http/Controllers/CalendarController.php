@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Calendar;
 use Carbon\Carbon;
+use Exception;
 use function GuzzleHttp\Promise\task;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -20,7 +21,7 @@ class CalendarController extends Controller
                 'date' => Carbon::parse ( $date )->format ( 'Y-m-d' ) ,
                 'holiday' => $holiday
             ] );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response ()->json ( [
                 'error' => true ,
                 'message' => "error occurred!" ,
@@ -45,7 +46,7 @@ class CalendarController extends Controller
         try {
             $checkDate = Carbon::parse ( $date )->format ( 'Y-m-d' );
             $isExisting = DB::table ( 'calendar' )->where ( 'date' , $checkDate )->exists ();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
 
         }
     }
@@ -58,7 +59,7 @@ class CalendarController extends Controller
                'error'=>false,
                'dates'=>$dates
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
 
             return response ()->json ( [
                 'error'=>true,
@@ -83,7 +84,7 @@ class CalendarController extends Controller
                     'message'=>"record not exists maybe deleted"
                 ]);
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response ()->json ([
                 'error'=>true,
                 'message'=>"error occurred"

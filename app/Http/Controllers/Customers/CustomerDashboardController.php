@@ -11,6 +11,8 @@ namespace App\Http\Controllers\Customers;
 
 
 use App\Customer;
+use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -70,12 +72,17 @@ class CustomerDashboardController
                     'route_id'=>$request->route_id
                 ]);
                 if ($customer){
+                    $monthlyGrowth = $this->customerController->getMonthlyGrowth();
+                    $count = $this->customerController->getTotalCustomers();
                     return response()->json([
                         'error'=>false,
-                        'message'=>"customer added successfully"
+                        'message'=>"customer added successfully",
+                        'customer'=>$customer,
+                        'monthlyGrowth'=>$monthlyGrowth,
+                        'count'=>$count
                     ]);
                 }
-            }catch (\Exception $e){
+            }catch (Exception $e){
                 return response()->json([
                     'error'=>true,
                     'message'=>$e
@@ -100,10 +107,89 @@ class CustomerDashboardController
                 'monthlyGrowth'=>$monthlyGrowth,
                 'count'=>$count
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'error'=>true,
                 'message'=> "error occurred!"
+            ]);
+        }
+    }
+
+    public function getCustomerNumber() {
+        $customer_no = DB::table('customer')->orderBy('customer_no', 'desc')->select('customer_no')->pluck('customer_no')->first();
+
+        return response()->json([
+            'error' => false,
+            'customer_no' => $customer_no + 1
+        ]);
+    }
+
+    public function editCustomer(Request $request) {
+        $customer_id = DB::table('customer')->where('customer_no','=',$request['customer_no'])->select('id')->pluck('id')->first();
+        $customer_name = $request['name'];
+        $nic = $request['nic'];
+        $contact_no = $request['contact_no'];
+        $route_id = $request['route_id'];
+        $addLine1 = $request['addLine1'];
+        $addLine2 = $request['addLine2'];
+        $city = $request['city'];
+
+        $result = DB::table('customer')->where('id','=',$customer_id)->update([
+            'name'=>$customer_name,
+            'NIC'=>$nic,
+            'contact_no'=>$contact_no,
+            'route_id'=>$route_id,
+            'addLine1'=>$addLine1,
+            'addLine2'=>$addLine2,
+            'city'=>$city
+        ]);
+
+        if ($result>0) {
+            $customer = DB::table('customer')->where('id','=',$customer_id)->first();
+
+            return response()->json([
+                'error'=>false,
+                'message'=>"successfully edit the customer",
+                'customer'=>$customer
+            ]);
+        } else {
+            return response()->json([
+                'error'=>true,
+                'message'=>"failed to edit the customer"
+            ]);
+        }
+    }
+
+    public function deleteCustomer(Request $request) {
+        $result = DB::table('customer')->where('customer_no','=',$request['customer_no'])->update([
+            'deleted_at'=>Carbon::now()
+        ]);
+
+        if ($result>0) {
+            return response()->json([
+                'error'=>false,
+                'message'=>"deleted successfully!"
+            ]);
+        } else {
+            return response()->json([
+                'error'=>true,
+                'message'=>"delete fail"
+            ]);
+        }
+    }
+
+    public function getCustomersToDisable() {
+        $d_cus = DB::table('customer')->where('status','!=',"disable")->whereNull('deleted_at')->get();
+
+        if ($d_cus->count()>0) {
+            return response()->json([
+                'error'=>false,
+                'd_cus'=>$d_cus
+            ]);
+        } else {
+            return response()->json([
+                'error'=>true,
+                'message'=>"Error!"
             ]);
         }
     }
