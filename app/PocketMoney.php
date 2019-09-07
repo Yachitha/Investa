@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property static transaction_date
@@ -17,6 +18,8 @@ class PocketMoney extends Model
     /*
      * Fields=> id, transaction_date, description, amount, sales_rep_id, timestamps, cash_book, bank_book
     **/
+    use SoftDeletes;
+
     protected $table = 'sales_rep_expenses';
     protected /** @noinspection SpellCheckingInspection */
         $fillable = [

@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @method static create(array $array)
@@ -10,6 +11,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Customer extends Model
 {
+    use SoftDeletes;
+
     protected $table = 'customer';
     protected $fillable = [
         'customer_no', 'name', 'email', 'NIC', 'contact_no', 'status', 'addLine1', 'addLine2', 'city', 'route_id'

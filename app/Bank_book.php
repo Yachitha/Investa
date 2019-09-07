@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property string transaction_date
@@ -15,6 +16,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Bank_book extends Model
 {
+    use SoftDeletes;
     protected $table = "bank_book";
     protected $fillable = [
         'transaction_date', 'description', 'deposit', 'withdraw', 'balance', 'cheque_no'

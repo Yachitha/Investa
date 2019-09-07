@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property null bank_book_id
@@ -15,6 +16,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Customer_repayment extends Model
 {
+    use SoftDeletes;
+
     protected $table = 'customer_loan_repayment';
     protected $fillable = [
         'amount', 'installment_count', 'remaining_amount', 'loan_id',

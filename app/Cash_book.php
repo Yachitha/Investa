@@ -3,17 +3,21 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
 
 /**
  * @property string transaction_date
- * @property \Illuminate\Support\Collection description
+ * @property Collection description
  * @property float deposit
  * @property mixed withdraw
- * @property \Illuminate\Database\Eloquent\Model|null|object|static balance
+ * @property Model|null|object|static balance
  * @property mixed id
  */
 class Cash_book extends Model
 {
+    use SoftDeletes;
+
     protected $table="cash_book";
     protected $fillable = [
         'transaction_date', 'description', 'deposit', 'withdraw', 'balance'

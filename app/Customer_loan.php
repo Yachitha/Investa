@@ -3,12 +3,15 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property mixed id
  */
 class Customer_loan extends Model
 {
+    use SoftDeletes;
+
     protected $table = 'customer_loan';
     protected $fillable = [
         'loan_no','loan_amount' ,'start_date', 'end_date', 'customer_id', 'no_of_installments', 'installment_amount', 'interest_rate', 'duration'
