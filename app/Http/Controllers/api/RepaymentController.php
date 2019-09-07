@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection ALL */
 
 namespace App\Http\Controllers\api;
 
@@ -98,7 +98,7 @@ class RepaymentController extends Controller
                 ]);
             }
 
-        }else{
+        } else{
             $bank_last_balance = Bank_book::all ()->last ()->balance;
 
             $bank_book = new Bank_book();
@@ -144,7 +144,7 @@ class RepaymentController extends Controller
                 $loan_repayments->bank_book_id = $bank_id;
                 $loan_repayments->cash_book_id = $cash_id;
                 $loan_repayments->amount = $amount;
-                $loan_repayments->installment_count =$installment_count-1;
+                $loan_repayments->installment_count =$installment_count-1;//TODO should be incremental
                 $loan_repayments->remaining_amount = $remaining_amount-$amount;
                 $loan_repayments->save ();
             }
@@ -154,7 +154,7 @@ class RepaymentController extends Controller
                 $loan_repayments->bank_book_id = $bank_id;
                 $loan_repayments->cash_book_id = $cash_id;
                 $loan_repayments->amount = $amount;
-                $loan_repayments->installment_count =$this->no_of_installments-1;
+                $loan_repayments->installment_count =$this->no_of_installments-1;//TODO should be incremental
                 $loan_repayments->remaining_amount = $this->loan_amount-$amount;
                 $loan_repayments->save ();
             }
