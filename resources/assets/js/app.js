@@ -23,6 +23,10 @@ import CustomerList from './components/Customer/CustomerList';
 import LoanDashboard from './components/Loans/CustomerLoanComponent';
 import CashBook from './components/cashBook/CashBookComponent';
 import BankBook from './components/bankBook/BankBookComponent';
+import Settings from './components/settings/SettingsComponent';
+import Expenses from './components/expenses/ExpensesComponent';
+import Income from './components/income/IncomeComponent';
+import DailySummary from './components/dailySummary/dailySummaryComponent';
 
 Vue.use(Notification);
 Vue.use(VueRouter);
@@ -69,6 +73,26 @@ const router = new VueRouter({
             path: '/bankBook',
             name: 'BankBook',
             component: BankBook
+        },
+        {
+            path: '/settings',
+            name: 'Settings',
+            component: Settings
+        },
+        {
+            path: '/expenses',
+            name: 'Expenses',
+            component: Expenses
+        },
+        {
+            path: '/income',
+            name: 'Income',
+            component: Income
+        },
+        {
+            path: '/dailySummary',
+            name: 'DailySummary',
+            component: DailySummary
         }
     ]
 });
@@ -95,7 +119,8 @@ Vue.use(Vuetify, {
         "error": "#FF5252",
         "info": "#2196F3",
         "success": "#4CAF50",
-        "warning": "#FFC107"
+        "warning": "#FFC107",
+        "special": "#7A7DB7",
     }
 });
 /**
