@@ -21,6 +21,7 @@ class CreateCashBookTable extends Migration
             $table->float ('withdraw');
             $table->float ('balance');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

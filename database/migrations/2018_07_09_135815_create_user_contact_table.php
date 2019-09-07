@@ -18,6 +18,7 @@ class CreateUserContactTable extends Migration
             $table->integer ('user_id');
             $table->string ('number');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

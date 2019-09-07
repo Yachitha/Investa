@@ -18,6 +18,7 @@ class CreateSalesRepSalaryPaymentTable extends Migration
             $table->date('payment_date');
             $table->double('payment_amount');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

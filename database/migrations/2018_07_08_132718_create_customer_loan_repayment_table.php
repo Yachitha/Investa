@@ -26,6 +26,7 @@ class CreateCustomerLoanRepaymentTable extends Migration
             /** @noinspection PhpUndefinedMethodInspection */
             $table->boolean ('isChecked')->default(0);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

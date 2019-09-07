@@ -18,6 +18,7 @@ class CreateCalendarTable extends Migration
             $table->date('date');
             $table->boolean ('holiday');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

@@ -20,8 +20,9 @@ class CreateBankBookTable extends Migration
             $table->float ('deposit');
             $table->float ('withdraw');
             $table->float ('balance');
-            $table->string ('cheque_no');
+            $table->string ('cheque_no')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

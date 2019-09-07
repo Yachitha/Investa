@@ -22,6 +22,7 @@ class CreateSalesRepLoanRepaymentTable extends Migration
             $table->integer ('cash_book_id');
             $table->integer ('bank_book_id');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

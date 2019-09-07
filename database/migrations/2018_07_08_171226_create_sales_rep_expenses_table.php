@@ -24,6 +24,7 @@ class CreateSalesRepExpensesTable extends Migration
             /** @noinspection PhpUndefinedMethodInspection */
             $table->integer ('bank_book_id')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

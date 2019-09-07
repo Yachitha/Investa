@@ -24,6 +24,7 @@ class CreateSalesRepLoanTable extends Migration
             $table->integer ('duration');
             $table->integer ('sales_rep_id');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

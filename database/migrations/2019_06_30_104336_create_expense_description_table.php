@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateSalesRepCommissionTable extends Migration
+class CreateExpenseDescriptionTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,13 @@ class CreateSalesRepCommissionTable extends Migration
      */
     public function up()
     {
-        Schema::create('sales_rep_commission', function (Blueprint $table) {
+        Schema::create('expense_description', function (Blueprint $table) {
             $table->increments('id');
-            $table->float ('commission_rate');
-            $table->float ('commission_amount');
-            $table->date('date');
-            $table->integer('loan_id');
-            $table->integer('user_id');
+            $table->string('description');
+            $table->string('example_col_1');
+            $table->string('example_col_2');
+            $table->string('example_col_3');
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
@@ -32,6 +30,6 @@ class CreateSalesRepCommissionTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('sales_rep_commission');
+        Schema::dropIfExists('expense_description');
     }
 }

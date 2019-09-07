@@ -29,6 +29,7 @@ class CreateUsersTable extends Migration
             $table->integer ('route_id')->nullable();
             $table->rememberToken();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

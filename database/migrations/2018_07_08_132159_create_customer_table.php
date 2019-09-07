@@ -25,6 +25,7 @@ class CreateCustomerTable extends Migration
             $table->string ('city');
             $table->integer ('route_id');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
