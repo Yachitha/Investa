@@ -9,14 +9,19 @@
 namespace App\Http\Controllers\Reports\DaySheet;
 
 
+use function app;
 use App\Http\Controllers\Reports\ReportController;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 
 class DaySheet extends ReportController
 {
     public function createPdf ()
     {
-        $pdf = \app ('dompdf.wrapper')->loadView('Reports.DaySheet.daySheet');
+        $pdf = app ('dompdf.wrapper')->loadView('Reports.DaySheet.daySheet');
         return $pdf->download ('daySheet.pdf');
     }
 
@@ -40,5 +45,38 @@ class DaySheet extends ReportController
         }
         $group = collect($array)->split(count($array)/53)->toArray();
         return $group;
+    }
+
+    public function getInitialData() {
+        $routes = DB::table('route')->whereNull('deleted_at')->get();
+        $sales_reps = DB::table('users')->where('role_id','=',2)->whereNull('deleted_at')->get();
+
+        return response()->json([
+            'error'=>false,
+            'routes'=>$routes,
+            'sales_reps'=>$sales_reps
+        ]);
+    }
+
+    public function getDataByDate(Request $request) {
+
+        $validator = Validator::make($request->all(), [
+            'date'=>'required',
+            'route_id'=>'required'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'error'=>true,
+                'message'=>$validator->errors()
+            ]);
+        } else {
+            $date = Carbon::parse($request['date']);
+            $route_id = $request['route_id'];
+
+            if ($route_id == -1){
+
+            }
+        }
     }
 }
