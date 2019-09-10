@@ -161,6 +161,8 @@ Route::post('/cashBookAmountUpdate','Settings\SettingsController@cashBookAmountU
 
 Route::get('/getInitialDataDSummary','dailySummary\DailySummaryController@getInitialData');
 
+Route::get('/getInitialDataDaySheet','Reports\DaySheet\DaySheet@getInitialData');
+
 Route::get('{any}', function () {
     return view('Dashboard.mainDashboard');
 })->where('any','.*');
