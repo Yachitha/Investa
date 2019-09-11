@@ -75,8 +75,36 @@ class DaySheet extends ReportController
             $route_id = $request['route_id'];
 
             if ($route_id == -1){
+                $bf_amount = $this->getBFAmount($date);
 
             }
         }
+    }
+
+    private function getBFAmount($date) {
+
+        $record = DB::table('cash_book')->whereDate('created_by','=',Carbon::parse($date))->whereNull('deleted_at')->orderBy('id','asc')->first();
+
+        if ($record) {
+            return $record->balance;
+        } else {
+            return DB::table('cash_book')->whereNull('deleted_at')->latest('balance');
+        }
+    }
+
+    private function getCollectionsByRoute() {
+        $routes = DB::table('route')->whereNull('deleted_at')->get();
+        $arr = [];
+        foreach ($routes as $route) {
+            $arr = [
+                $route->name => $this->getCollection($route->id)
+            ];
+        }
+
+        return $arr;
+    }
+
+    private function getCollection($route_id) {
+        $cust = DB::table('customer')->where('route_id','=',$route_id)->whereNull('deleted_at')->get();
     }
 }
