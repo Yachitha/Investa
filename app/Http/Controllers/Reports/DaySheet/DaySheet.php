@@ -76,7 +76,8 @@ class DaySheet extends ReportController
 
             if ($route_id == -1){
                 $bf_amount = $this->getBFAmount($date);
-
+                $route_col = $this->getCollectionsByRoute($date);
+                $income_details = $this->getIncomeDetails($date);
             }
         }
     }
@@ -92,19 +93,50 @@ class DaySheet extends ReportController
         }
     }
 
-    private function getCollectionsByRoute() {
+    private function getCollectionsByRoute($date) {
         $routes = DB::table('route')->whereNull('deleted_at')->get();
         $arr = [];
         foreach ($routes as $route) {
             $arr = [
-                $route->name => $this->getCollection($route->id)
+                $route->name => $this->getCollection($route->id, $date)
             ];
         }
 
         return $arr;
     }
 
-    private function getCollection($route_id) {
-        $cust = DB::table('customer')->where('route_id','=',$route_id)->whereNull('deleted_at')->get();
+    private function getCollection($route_id, $date) {
+        $customers = DB::table('customer')->where('route_id','=',$route_id)->whereNull('deleted_at')->get();
+        $collection = 0;
+
+        foreach ($customers as $customer) {
+            $loans = DB::table('customer_loan')->where('customer_id','=',$customer->id)->whereNull('deleted_at')->get();
+            if ($loans) {
+                foreach ($loans as $loan) {
+                    $amount = DB::table('customer_repayment')->where('loan_id','=',$loan->id)->whereDate('created_at','=',$date)->select('amount')->pluck('amount')->first();
+                    $collection+=$amount;
+                }
+            }
+        }
+
+        return $collection;
+    }
+
+    private function getIncomeDetails($date) {
+        $output = [];
+        $total_collections = DB::table('customer_repayment')->whereDate('created_at','=',$date)->select('amount')->pluck('amount')->sum();
+        $ex_income = 0;
+        $sup_loan_in = DB::table('supplier_loan')->whereDate('created_at','=',$date)->whereNull('deleted_at')->select('loan_amount')->pluck('loan_amount')->sum();
+
+
+        $output = [
+            "total_col"=>$total_collections,
+        ];
+
+        return $output;
+    }
+
+    private function getExpenseDetails() {
+
     }
 }
