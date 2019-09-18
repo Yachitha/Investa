@@ -78,6 +78,13 @@ class DaySheet extends ReportController
                 $bf_amount = $this->getBFAmount($date);
                 $route_col = $this->getCollectionsByRoute($date);
                 $income_details = $this->getIncomeDetails($date);
+
+                return response()->json([
+                    'error'=>false,
+                    'bf_amount'=>$bf_amount,
+                    'route_col'=>$route_col,
+                    'income_details'=>$income_details
+                ]);
             }
         }
     }
@@ -123,14 +130,15 @@ class DaySheet extends ReportController
     }
 
     private function getIncomeDetails($date) {
-        $output = [];
         $total_collections = DB::table('customer_repayment')->whereDate('created_at','=',$date)->select('amount')->pluck('amount')->sum();
         $ex_income = 0;
         $sup_loan_in = DB::table('supplier_loan')->whereDate('created_at','=',$date)->whereNull('deleted_at')->select('loan_amount')->pluck('loan_amount')->sum();
 
 
         $output = [
-            "total_col"=>$total_collections,
+            "total_col" => $total_collections,
+            "ex_income" => $ex_income,
+            "sup_loan_in" => $sup_loan_in,
         ];
 
         return $output;

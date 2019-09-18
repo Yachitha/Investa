@@ -499,17 +499,21 @@
                 ]
             }
         },
+        created() {
+            this.getData()
+        },
         methods: {
             getData() {
                 axios.defaults.headers.common = {
                     'X-Requested-With': 'XMLHttpRequest',
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 };
-                axios.get('/daySheetTestData').then((response) => {
+                axios.get('/getInitialDataDaySheet').then((response) => {
+                    console.log(response);
                     if (response.status === 200) {
                         if (!response.data.error) {
                             // noinspection JSUnresolvedVariable
-                            this.populateData(response.data.data.daily_payments);
+
                         }
                     } else {
                         this.$notify({
@@ -533,8 +537,7 @@
                 });
             },
             populateData(data) {
-                this.items.push(data);
-                this.isPrint = true;
+
             },
             createPdf() {
                 // noinspection JSUnresolvedFunction
