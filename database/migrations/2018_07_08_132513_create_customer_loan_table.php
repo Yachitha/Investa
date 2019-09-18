@@ -29,6 +29,17 @@ class CreateCustomerLoanTable extends Migration
             $table->integer ('cash_book_id')->nullable();
             /** @noinspection PhpUndefinedMethodInspection */
             $table->integer ('bank_book_id')->nullable();
+            $table->boolean('isFinished');
+            $table->boolean('isArrears');
+            /** @noinspection PhpUndefinedMethodInspection */
+            $table->string('description')->nullable();
+            $table->float('due_amount');
+            $table->float('arrears_amount');
+            $table->string('type');
+            $table->integer('cheque_no');
+            $table->integer('bank_acc_id')->nullable();
+            $table->boolean('arrears_next');
+            $table->date('finished_date')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
