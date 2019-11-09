@@ -1,3 +1,4 @@
+<!--suppress JSUnresolvedVariable -->
 <template>
     <v-app>
         <v-container fluid>
@@ -13,7 +14,13 @@
                                 </v-list-tile-content>
                                 <v-layout align-center justify-end>
                                     <v-flex sm3 offset-sm1>
-                                        <v-select color="light" label="Route" single-line hide-details :items="routes">
+                                        <v-select color="light" label="Route"
+                                                  single-line hide-details
+                                                  :items="routes"
+                                                  v-model="routesDef"
+                                                  item-text="name"
+                                                  item-value="id"
+                                                  @change="changeRoute">
                                         </v-select>
                                     </v-flex>
                                     <v-flex sm3 offset-sm1>
@@ -56,12 +63,13 @@
                             <v-flex d-flex mt-2>
                                 <v-text-field
                                     label="BF AMOUNT"
-                                    placeholder="xxxx.xx"
+                                    placeholder="0.00"
                                     hide-details
                                     disabled
                                     outline
                                     readonly
                                     box
+                                    v-model="bfAmount"
                                 ></v-text-field>
                             </v-flex>
                             <v-flex d-flex mt-2>
@@ -78,6 +86,14 @@
                                             <template slot="items" slot-scope="props">
                                                 <td>{{ props.item.routeName }}</td>
                                                 <td class="text-xs-left">{{ props.item.payment }}</td>
+                                                <td class="text-xs-left">{{props.item.dueTotal}}</td>
+                                            </template>
+                                            <template slot="footer">
+                                                <td>
+                                                    {{ labelTotalCollection }}
+                                                </td>
+                                                <td>{{getTotalCollection}}</td>
+                                                <td>{{getTotalDueCollection}}</td>
                                             </template>
                                         </v-data-table>
                                     </v-flex>
@@ -96,7 +112,7 @@
                                         <v-subheader>{{labelLoanPayment}}</v-subheader>
                                     </v-flex>
                                     <v-flex d-flex md5>
-                                        <v-text-field solo outline hide-details disabled label="145896.00"
+                                        <v-text-field solo outline hide-details disabled v-model="income_details.total_col"
                                                       height=30></v-text-field>
                                     </v-flex>
                                 </v-layout>
@@ -107,7 +123,7 @@
                                         <v-subheader>{{labelExtraIncome}}</v-subheader>
                                     </v-flex>
                                     <v-flex d-flex md5>
-                                        <v-text-field solo outline hide-details disabled label="0.00"
+                                        <v-text-field solo outline hide-details disabled v-model="income_details.ex_income"
                                                       height=30></v-text-field>
                                     </v-flex>
                                 </v-layout>
@@ -118,7 +134,7 @@
                                         <v-subheader>{{labelSuppCashLoan}}</v-subheader>
                                     </v-flex>
                                     <v-flex d-flex md5>
-                                        <v-text-field solo outline hide-details disabled label="0.00"
+                                        <v-text-field solo outline hide-details disabled v-model="sup_loan_details.sup_loan_cash"
                                                       height=30></v-text-field>
                                     </v-flex>
                                 </v-layout>
@@ -129,7 +145,7 @@
                                         <v-subheader>{{labelSuppCheckLoan}}</v-subheader>
                                     </v-flex>
                                     <v-flex d-flex md5>
-                                        <v-text-field solo outline hide-details disabled label="0.00"
+                                        <v-text-field solo outline hide-details disabled v-model="sup_loan_details.sup_loan_che"
                                                       height=30></v-text-field>
                                     </v-flex>
                                 </v-layout>
@@ -140,7 +156,7 @@
                                         <v-subheader>{{labelEmpLoanPayment}}</v-subheader>
                                     </v-flex>
                                     <v-flex d-flex md5>
-                                        <v-text-field solo outline hide-details disabled label="0.00"
+                                        <v-text-field solo outline hide-details disabled v-model="income_details.emp_loan_pay"
                                                       height=30></v-text-field>
                                     </v-flex>
                                 </v-layout>
@@ -151,7 +167,7 @@
                                         <v-subheader>{{labelAccess}}</v-subheader>
                                     </v-flex>
                                     <v-flex d-flex md5>
-                                        <v-text-field solo outline hide-details disabled label="0.00"
+                                        <v-text-field solo outline hide-details disabled v-model="access"
                                                       height=30></v-text-field>
                                     </v-flex>
                                 </v-layout>
@@ -162,7 +178,7 @@
                                         <v-subheader>{{labelIncome}}</v-subheader>
                                     </v-flex>
                                     <v-flex d-flex md5>
-                                        <v-text-field solo outline hide-details disabled label="5507040.00"
+                                        <v-text-field solo outline hide-details disabled v-model="getIncome"
                                                       height=30></v-text-field>
                                     </v-flex>
                                 </v-layout>
@@ -179,7 +195,7 @@
                                         <v-subheader>{{labelLoanCash}}</v-subheader>
                                     </v-flex>
                                     <v-flex d-flex md5>
-                                        <v-text-field solo outline hide-details disabled label="5507040.00"
+                                        <v-text-field solo outline hide-details disabled v-model="expense_details.loan_total_cash"
                                                       height=30></v-text-field>
                                     </v-flex>
                                 </v-layout>
@@ -190,7 +206,7 @@
                                         <v-subheader>{{labelLoanCheque}}</v-subheader>
                                     </v-flex>
                                     <v-flex d-flex md5>
-                                        <v-text-field solo outline hide-details disabled label="5507040.00"
+                                        <v-text-field solo outline hide-details disabled v-model="expense_details.loan_total_che"
                                                       height=30></v-text-field>
                                     </v-flex>
                                 </v-layout>
@@ -201,7 +217,7 @@
                                         <v-subheader>{{labelSalaryPay}}</v-subheader>
                                     </v-flex>
                                     <v-flex d-flex md5>
-                                        <v-text-field solo outline hide-details disabled label="5507040.00"
+                                        <v-text-field solo outline hide-details disabled v-model="expense_details.salary_payment"
                                                       height=30></v-text-field>
                                     </v-flex>
                                 </v-layout>
@@ -212,7 +228,7 @@
                                         <v-subheader>{{labelSupLoanPayCash}}</v-subheader>
                                     </v-flex>
                                     <v-flex d-flex md5>
-                                        <v-text-field solo outline hide-details disabled label="5507040.00"
+                                        <v-text-field solo outline hide-details disabled v-model="expense_details.total_supplier_payment_cash"
                                                       height=30></v-text-field>
                                     </v-flex>
                                 </v-layout>
@@ -223,7 +239,7 @@
                                         <v-subheader>{{labelSupLoanPayChe}}</v-subheader>
                                     </v-flex>
                                     <v-flex d-flex md5>
-                                        <v-text-field solo outline hide-details disabled label="5507040.00"
+                                        <v-text-field solo outline hide-details disabled v-model="expense_details.total_supplier_payment_cheque"
                                                       height=30></v-text-field>
                                     </v-flex>
                                 </v-layout>
@@ -234,7 +250,7 @@
                                         <v-subheader>{{labelEmpLoan}}</v-subheader>
                                     </v-flex>
                                     <v-flex d-flex md5>
-                                        <v-text-field solo outline hide-details disabled label="5507040.00"
+                                        <v-text-field solo outline hide-details disabled v-model="expense_details.total_emp_loan"
                                                       height=30></v-text-field>
                                     </v-flex>
                                 </v-layout>
@@ -245,7 +261,7 @@
                                         <v-subheader>{{labelExtraExp}}</v-subheader>
                                     </v-flex>
                                     <v-flex d-flex md5>
-                                        <v-text-field solo outline hide-details disabled label="5507040.00"
+                                        <v-text-field solo outline hide-details disabled v-model="expense_details.extra_expenses"
                                                       height=30></v-text-field>
                                     </v-flex>
                                 </v-layout>
@@ -256,7 +272,7 @@
                                         <v-subheader>{{labelExp}}</v-subheader>
                                     </v-flex>
                                     <v-flex d-flex md5>
-                                        <v-text-field solo outline hide-details disabled label="5507040.00"
+                                        <v-text-field solo outline hide-details disabled v-model="expense_details.expenses"
                                                       height=30></v-text-field>
                                     </v-flex>
                                 </v-layout>
@@ -274,7 +290,7 @@
                                         <v-subheader>{{labelTotalInc}}</v-subheader>
                                     </v-flex>
                                     <v-flex d-flex md5>
-                                        <v-text-field solo outline hide-details disabled label="5507040.00"
+                                        <v-text-field solo outline hide-details disabled v-model="getTotalIncome"
                                                       height=30></v-text-field>
                                     </v-flex>
                                 </v-layout>
@@ -285,7 +301,7 @@
                                         <v-subheader>{{labelBankDeposit}}</v-subheader>
                                     </v-flex>
                                     <v-flex d-flex md5>
-                                        <v-text-field solo outline hide-details disabled label="5507040.00"
+                                        <v-text-field solo outline hide-details disabled v-model="bank_deposit"
                                                       height=30></v-text-field>
                                     </v-flex>
                                 </v-layout>
@@ -296,7 +312,7 @@
                                         <v-subheader>{{labelDayCash}}</v-subheader>
                                     </v-flex>
                                     <v-flex d-flex md5>
-                                        <v-text-field solo outline hide-details disabled label="5507040.00"
+                                        <v-text-field solo outline hide-details disabled v-model="getDayCash"
                                                       height=30></v-text-field>
                                     </v-flex>
                                 </v-layout>
@@ -307,7 +323,7 @@
                                         <v-subheader>{{labelCashOut}}</v-subheader>
                                     </v-flex>
                                     <v-flex d-flex md5>
-                                        <v-text-field solo outline hide-details disabled label="5507040.00"
+                                        <v-text-field solo outline hide-details disabled v-model="cash_out"
                                                       height=30></v-text-field>
                                     </v-flex>
                                 </v-layout>
@@ -318,7 +334,7 @@
                                         <v-subheader>{{labelBalance}}</v-subheader>
                                     </v-flex>
                                     <v-flex d-flex md5>
-                                        <v-text-field solo outline hide-details disabled label="5507040.00"
+                                        <v-text-field solo outline hide-details disabled v-model="getBalance"
                                                       height=30></v-text-field>
                                     </v-flex>
                                 </v-layout>
@@ -329,7 +345,7 @@
                                         <v-subheader>{{labelCashInLocker}}</v-subheader>
                                     </v-flex>
                                     <v-flex d-flex md5>
-                                        <v-text-field solo outline hide-details disabled label="5507040.00"
+                                        <v-text-field solo outline hide-details disabled v-model="cash_in_locker"
                                                       height=30></v-text-field>
                                     </v-flex>
                                 </v-layout>
@@ -340,7 +356,7 @@
                                         <v-subheader>{{labelDayProfit}}</v-subheader>
                                     </v-flex>
                                     <v-flex d-flex md5>
-                                        <v-text-field solo outline hide-details disabled label="5507040.00"
+                                        <v-text-field solo outline hide-details disabled v-model="day_profit"
                                                       height=30 class="resize_field"></v-text-field>
                                     </v-flex>
                                 </v-layout>
@@ -348,6 +364,126 @@
                         </v-layout>
                     </v-card>
                 </v-flex>
+            </v-layout>
+            <v-layout row mt-2>
+                <v-flex wrap>
+                    <v-card class="bg-gradient">
+                        <v-layout row p-2>
+                            <v-flex>
+                                <v-card-title class="white--text summary-text">Actions</v-card-title>
+                            </v-flex>
+                            <v-spacer></v-spacer>
+                            <v-flex class="text-xs-right">
+                                <v-menu left>
+                                    <v-btn slot="activator" dark icon>
+                                        <v-icon>settings</v-icon>
+                                    </v-btn>
+                                    <v-list>
+                                        <v-list-tile v-for="(item, i) in footerMenu" :key="i" @click="enableFooter">
+                                            <v-list-tile-title>{{ item.title }}</v-list-tile-title>
+                                        </v-list-tile>
+                                    </v-list>
+                                </v-menu>
+                            </v-flex>
+                        </v-layout>
+                        <v-layout row p-2>
+                            <v-flex xs12 sm12 md4>
+                                <v-card-text class="summary-sub-text">Access Balancing</v-card-text>
+                                <v-divider></v-divider>
+                                <v-layout row mt-2 ml-2>
+                                    <v-flex wrap xs10 sm10 md10>
+                                        <v-form
+                                            ref="form"
+                                            lazy-validation>
+                                            <v-text-field
+                                                v-model="access"
+                                                required
+                                                solo
+                                                outline
+                                                clearable
+                                                color="light"
+                                                dark
+                                                :disabled="disableFooter"
+                                            >
+                                            </v-text-field>
+                                        </v-form>
+                                    </v-flex>
+                                </v-layout>
+                            </v-flex>
+                            <v-divider class="mx-3" inset vertical></v-divider>
+                            <v-flex xs12 sm12 md4>
+                                <v-card-text class="summary-sub-text">Cash Out Balancing</v-card-text>
+                                <v-divider></v-divider>
+                                <v-layout row mt-2 ml-2>
+                                    <v-flex wrap xs10 sm10 md10>
+                                        <v-form
+                                            ref="form"
+                                            lazy-validation>
+                                            <v-text-field
+                                                v-model="cash_out"
+                                                required
+                                                solo
+                                                outline
+                                                clearable
+                                                color="light"
+                                                dark
+                                                :disabled="disableFooter"
+                                            >
+                                            </v-text-field>
+                                        </v-form>
+                                    </v-flex>
+                                </v-layout>
+                            </v-flex>
+                            <v-divider class="mx-3" inset vertical></v-divider>
+                            <v-flex xs12 sm12 md4>
+                                <v-card-text class="summary-sub-text">Cash In Locker</v-card-text>
+                                <v-divider></v-divider>
+                                <v-layout row mt-2 ml-2>
+                                    <v-flex wrap xs10 sm10 md10>
+                                        <v-form
+                                            ref="form"
+                                            lazy-validation>
+                                            <v-text-field
+                                                v-model="cash_in_locker"
+                                                required
+                                                solo
+                                                outline
+                                                clearable
+                                                color="light"
+                                                dark
+                                                :disabled="disableFooter"
+                                            >
+                                            </v-text-field>
+                                        </v-form>
+                                    </v-flex>
+                                </v-layout>
+                            </v-flex>
+                        </v-layout>
+                        <v-layout p-2 row wrap justify-end>
+                            <v-divider></v-divider>
+                            <v-flex xs6 sm4 md4 shrink class="text-xs-right">
+                                <v-btn color="#6109A3" dark @click="completeDaySheet">finalize day sheet</v-btn>
+                            </v-flex>
+                        </v-layout>
+                    </v-card>
+                </v-flex>
+            </v-layout>
+            <v-layout row justify-center>
+                <v-dialog v-model="daySheetSuccessDialog" max-width="400" persistent>
+                    <v-card>
+                        <v-card-title class="subheading">
+                            {{daySheetSuccessTitle}}
+                        </v-card-title>
+                        <v-divider light></v-divider>
+                        <v-card-text>
+                            {{ daySheetSuccessMessage }}
+                        </v-card-text>
+                        <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn color="green darken-1" @click="daySheetSuccessDialog=false" flat="flat">OK</v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </v-dialog>
             </v-layout>
         </v-container>
         <v-container fluid id="content" v-show="isPrint">
@@ -421,12 +557,6 @@
 
     export default {
         name: "DaySheetComponent",
-        beforeMount() {
-            // this.getData();
-        },
-        mounted() {
-
-        },
         data() {
             return {
                 companyName: "SOUTHERN INVESTMENT",
@@ -437,15 +567,27 @@
                 salesRepName: "Amal",
                 dueTotLabel: "Due Total Collection",
                 dueTotValue: 85000.00,
+                footerMenu: [
+                    {title: 'Edit', text: 'Edit'},
+                ],
                 items: [],
                 createDate: new Date(),
                 isPrint: false,
-                routes: ["Galle", "karapitiya", "Ahangama"],
+                routes: [
+                    {
+                        id: -1,
+                        name: "ALL"
+                    }
+                ],
+                routesDef:{
+                    id: -1,
+                    name: "ALL"
+                },
                 date: new Date().toISOString().substr(0, 10),
                 menu: false,
                 modal: false,
                 menu2: false,
-                bfAmount: "BF AMOUNT",
+                labelBfAmount: "BF AMOUNT",
                 labelLoanPayment: "Loan Payments",
                 labelExtraIncome: "Extra Income",
                 labelSuppCashLoan: "Supplier Cash Loan",
@@ -477,53 +619,69 @@
                     },
                     {
                         text: 'Total Payments',
+                        align: 'left',
+                        sortable:false,
                         value: 'payment'
+                    },
+                    {
+                        text: 'Due Total Payments',
+                        align: 'left',
+                        sortable: false,
+                        value: 'dueTotal'
                     }
                 ],
-                payments: [
-                    {
-                        value: false,
-                        routeName: 'Galle',
-                        payment: 51400.00
-                    },
-                    {
-                        value: false,
-                        routeName: 'Karapitiya',
-                        payment: 41400.00
-                    },
-                    {
-                        value: false,
-                        routeName: 'Ahangama',
-                        payment: 31400.00
-                    }
-                ]
+                payments: [],
+                bfAmount:0.0,
+                labelTotalCollection: "Total Collection",
+                totalPayment:0.0,
+                income_details:{},
+                expense_details:{},
+                total_income:0,
+                bank_deposit:0,
+                day_cash:0,
+                cash_out:0,
+                balance:0,
+                cash_in_locker:0,
+                day_profit:0,
+                sup_loan_details:{},
+                access:0,
+                income:0,
+                totalDuePayment:0.0,
+                disableFooter: false,
+                route_id_req:-1,
+                daySheetSuccessDialog:false,
+                daySheetSuccessTitle: "Data Saved!",
+                daySheetSuccessMessage: "Day sheet data saved successfully"
             }
         },
         created() {
-            this.getData()
+            this.getData();
+            this.getDataByDate(-1);
+            this.disableFooterFunc();
         },
         methods: {
+            disableFooterFunc() {
+                this.disableFooter = true;
+            },
             getData() {
                 axios.defaults.headers.common = {
                     'X-Requested-With': 'XMLHttpRequest',
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 };
                 axios.get('/getInitialDataDaySheet').then((response) => {
-                    console.log(response);
                     if (response.status === 200) {
-                        if (!response.data.error) {
-                            // noinspection JSUnresolvedVariable
-
+                        if (response.data.error) {
+                            this.$notify({
+                                group: 'auth',
+                                title: 'Error',
+                                type: 'error',
+                                text: response.data.message,
+                                fontsize: '20px'
+                            });
+                        } else {
+                            this.populateInitialData(response.data.routes);
                         }
-                    } else {
-                        this.$notify({
-                            group: 'auth',
-                            title: 'Error',
-                            type: 'error',
-                            text: "error occurred!",
-                            fontsize: '20px',
-                            position: 'top center'
-                        });
+
                     }
                 }).catch((error) => {
                     this.$notify({
@@ -536,8 +694,172 @@
                     });
                 });
             },
-            populateData(data) {
+            populateInitialData(routes) {
+                routes.forEach((route)=>{
+                    this.routes.push({id:route.id, name:route.name});
+                });
+            },
+            getDataByDate(route_id) {
+                this.$Progress.start();
+                axios.defaults.headers.common = {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                };
+                axios.post('/daySheetDataByDate', {
+                    date: this.date,
+                    route_id: route_id
+                }).then((response) => {
+                    console.log(response);
+                    if (response.status === 200) {
+                        if (response.data.error) {
+                            this.$Progress.fail();
+                            this.$notify({
+                                group: 'auth',
+                                title: 'Error',
+                                type: 'error',
+                                text: response.data.message,
+                                fontsize: '20px'
+                            });
+                        } else {
+                            this.$Progress.finish();
+                            this.populateData(response.data);
+                        }
 
+                    }
+                }).catch((error) => {
+                    this.$notify({
+                        group: 'auth',
+                        title: 'Error',
+                        type: 'error',
+                        text: error,
+                        fontsize: '20px'
+                    });
+                });
+            },
+            populateData(data) {
+                this.flushCollectionTable();
+                this.setBfAmount(data.bf_amount);
+                this.setRouteWiseCollection(data.route_col);
+                this.setIncomeDetails(data.income_details);
+                this.setExpenseDetails(data.expense_details);
+                this.setTotalIncome(data.total_income);
+                this.setBankDeposit(data.bank_deposit);
+                this.setDayCash(data.day_cash);
+                this.setDayProfit(data.day_profit);
+                this.setSupLoanDetails();
+            },
+            flushCollectionTable () {
+                this.payments.splice(0, this.payments.length);
+            },
+            setSupLoanDetails() {
+                Object.assign(this.sup_loan_details,this.income_details.sup_loan_in);
+            },
+            setBfAmount(amount) {
+                this.bfAmount = amount;
+            },
+            setRouteWiseCollection(cols) {
+                cols.forEach((col)=>{
+                    this.payments.push({
+                        value: false,
+                        routeName: col.name,
+                        payment: col.amount,
+                        dueTotal: col.due_total
+                    })
+                })
+            },
+            setIncomeDetails(details) {
+                Object.assign(this.income_details,details);
+                console.log(this.income_details)
+            },
+            setExpenseDetails(details) {
+                Object.assign(this.expense_details,details);
+            },
+            setTotalIncome(income) {
+                this.total_income = income;
+            },
+            setBankDeposit(deposit) {
+                this.bank_deposit = deposit;
+            },
+            setDayCash(cash) {
+                this.day_cash = cash;
+            },
+            setCashOut(out) {
+                this.cash_out = out;
+            },
+            setBalance(balance) {
+                this.balance = balance;
+            },
+            setCashInLocker(cash) {
+                this.cash_in_locker = cash;
+            },
+            setDayProfit(profit) {
+                this.day_profit = profit;
+            },
+            changeRoute(id) {
+                this.route_id_req = id;
+                this.getDataByDate(id);
+            },
+            completeDaySheet() {
+                axios.defaults.headers.common = {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                };
+                axios.post('/daySheetSaveReq', {
+                    date: this.date,
+                    route_id: this.route_id_req,
+                    bfAmount: this.bfAmount,
+                    totalCol: this.income_details.total_col,
+                    exIncome: this.income_details.ex_income,
+                    supLoanCash: this.sup_loan_details.sup_loan_cash,
+                    supLoanChe: this.sup_loan_details.sup_loan_che,
+                    empLoanPay: this.income_details.emp_loan_pay,
+                    dayAccess: this.access,
+                    dayIncome: this.income,
+                    loanCash: this.expense_details.loan_total_cash,
+                    loanChe: this.expense_details.loan_total_che,
+                    daySalaryPay: this.expense_details.salary_payment,
+                    daySupPayCash: this.expense_details.total_supplier_payment_cash,
+                    daySupPayChe: this.expense_details.total_supplier_payment_cheque,
+                    empLoan: this.expense_details.total_emp_loan,
+                    extraEx: this.expense_details.extra_expenses,
+                    expenses: this.expense_details.expenses,
+                    dayTotIncome: this.total_income,
+                    dayBDeposit: this.bank_deposit,
+                    dayCash: this.day_cash,
+                    dayCashOut: this.cash_out,
+                    dayBalance: this.balance,
+                    dayCashInLocker: this.cash_in_locker,
+                    dayProfit: this.day_profit
+                }).then((response) => {
+                    console.log(response);
+                    if (response.status === 200) {
+                        if (response.data.error) {
+                            this.$Progress.fail();
+                            this.$notify({
+                                group: 'auth',
+                                title: 'Error',
+                                type: 'error',
+                                text: response.data.message,
+                                fontsize: '20px'
+                            });
+                        } else {
+                            this.daySheetSuccessDialog = true;
+                            this.disableFooter = true;
+                        }
+
+                    }
+                }).catch((error) => {
+                    this.$notify({
+                        group: 'auth',
+                        title: 'Error',
+                        type: 'error',
+                        text: error,
+                        fontsize: '20px'
+                    });
+                });
+            },
+            enableFooter() {
+                this.disableFooter = false;
             },
             createPdf() {
                 // noinspection JSUnresolvedFunction
@@ -581,7 +903,49 @@
             },
             salesRepNameToUpperCase: function () {
                 return this.salesRepName.toUpperCase();
-            }
+            },
+            getIncome: function (){
+                if (Object.keys(this.income_details).length === 0) {
+                    return 0;
+                }
+
+                this.income = this.bfAmount + this.income_details.total_col + this.income_details.ex_income + this.sup_loan_details.sup_loan_cash
+                    + this.sup_loan_details.sup_loan_che + this.income_details.emp_loan_pay + this.access;
+
+                return this.income;
+            },
+            getTotalIncome: function () {
+                this.total_income = this.income-parseFloat(this.expense_details.expenses);
+
+                return this.total_income;
+            },
+            getDayCash: function () {
+                this.day_cash = this.total_income - this.bank_deposit;
+
+                return this.day_cash;
+            },
+            getBalance: function () {
+                this.balance = this.day_cash - this.cash_out;
+
+                return this.balance;
+            },
+            getTotalCollection: function () {
+                let t=0;
+                this.payments.forEach((item)=>{
+                    t += item.payment;
+                });
+
+                this.totalPayment = t;
+                return t;
+            },
+            getTotalDueCollection: function () {
+                let c =0;
+                this.payments.forEach((item)=>{
+                    c += item.dueTotal;
+                });
+                this.totalDuePayment = c;
+                return c;
+            },
         }
     }
 </script>
@@ -607,5 +971,38 @@
     .resize_field label[for]{
         height: 20px;
         font-size: 10pt;
+    }
+    .text-simple {
+        font-size: 24px;
+        padding: 16px;
+        font-weight: bold;
+        color: #FFFFFF;
+        text-align: center;
+    }
+
+    .summary-text {
+        font-size: 18px !important;
+        padding: 16px;
+        font-weight: bold;
+        color: #FFFFFF;
+    }
+
+    .summary-sub-text {
+        font-size: 16px !important;
+        padding: 16px;
+        font-weight: bold;
+        color: #ffffff;
+    }
+
+    .bg-special {
+        background-repeat: inherit;
+        background-position: inherit;
+        background-image: inherit;
+        background-color: inherit;
+        background-attachment: inherit;
+    }
+    .bg-gradient{
+        background: rgb(97,9,163);
+        background: linear-gradient(90deg, rgba(97,9,163,0.9836309523809523) 0%, rgba(123,46,200,1) 21%, rgba(122,125,183,1) 100%);
     }
 </style>
