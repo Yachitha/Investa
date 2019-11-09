@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Whoops\Exception\ErrorException;
 
 class RepaymentController extends Controller
@@ -113,7 +114,8 @@ class RepaymentController extends Controller
             $bank_book_id = $bank_book->id;
 
             $loan_repayments = $this->repayments_create ($loan_id, null, $bank_book_id, $bank_amount);
-            if ($loan_repayments){
+            $update_cust_loan = $this->update_cust_loan($loan_id,$bank_amount+$cash_amount,$loan_repayments);
+            if ($loan_repayments&&$update_cust_loan){
                 return response ()->json([
                     "error"=>FALSE,
                     "repayments"=>$loan_repayments
@@ -126,6 +128,15 @@ class RepaymentController extends Controller
             }
 
         }
+    }
+
+    private function update_cust_loan($loan_id, $amount,$payment) {
+        $loan = DB::table('customer_loan')->where('id','=',$loan_id)->get();
+        $updated_loan = DB::table('customer_loan')->where('id','=',$loan_id)->update([
+            'due_amount'=>$payment->remaining_amount,
+            'arrears_amount'=>$loan->arrears_amount-$amount
+        ]);
+        return $updated_loan;
     }
 
     public function repayments_create($loan_id, $cash_id, $bank_id, $amount){
