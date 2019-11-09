@@ -72,7 +72,7 @@
                     {
                         text: 'Customer Name',
                         align: 'left',
-                        sortable: true,
+                        sortable: false,
                         value: 'name'
                     },
                     {
