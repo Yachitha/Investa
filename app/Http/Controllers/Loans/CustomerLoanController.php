@@ -253,7 +253,7 @@ class CustomerLoanController
 
                 $customer_loan_id = null;
                 if ($cash_withdraw_id != null || $bank_withdraw_id != null) {
-                    $customer_loan_id = $this->addLoan($loan_no, $loan_interest, $loan_amount, $total_loan_amount, $installment_amount, $payment_days, $start_date, $end_date, $duration, $customer_id, $cash_withdraw_id, $bank_withdraw_id);
+                    $customer_loan_id = $this->addLoan($loan_no, $loan_interest, $loan_amount, $total_loan_amount, $installment_amount, $payment_days, $start_date, $end_date, $duration, $customer_id, $cash_withdraw_id, $bank_withdraw_id, $cheque_no);
                 }
 
                 $this->addInitialRepaymentColumn($customer_loan_id, $payment_days, $total_loan_amount);
@@ -417,7 +417,7 @@ class CustomerLoanController
      * @return mixed|null
      */
 
-    private function addLoan($loan_no, $loan_interest, $loan_amount, $total_loan_amount, $installment_amount, $payment_days, $start_date, $end_date, $duration, $customer_id, $cash_withdraw_id, $bank_withdraw_id)
+    private function addLoan($loan_no, $loan_interest, $loan_amount, $total_loan_amount, $installment_amount, $payment_days, $start_date, $end_date, $duration, $customer_id, $cash_withdraw_id, $bank_withdraw_id, $cheque_no)
     {
         try {
             $customer_loan = new Customer_loan();
@@ -433,6 +433,13 @@ class CustomerLoanController
             $customer_loan['customer_id'] = $customer_id;
             $customer_loan['cash_book_id'] = $cash_withdraw_id;
             $customer_loan['bank_book_id'] = $bank_withdraw_id;
+            $customer_loan['isFinished'] = false;
+            $customer_loan['isArrears'] = false;
+            $customer_loan['due_amount'] = $total_loan_amount;
+            $customer_loan['arrears_amount'] = 0.00;
+            $customer_loan['type'] = "cash";
+            $customer_loan['cheque_no'] = $cheque_no;
+            $customer_loan['arrears_next'] = false;
 
             $customer_loan->save();
 
@@ -790,7 +797,7 @@ class CustomerLoanController
      * @return Model|Builder|object|null
      */
 
-    private function editLoanDetails($loan_id, $loan_interest, $loan_amount, $total_loan_amount, $installment_amount, $payment_days, $start_date, $end_date, $duration, $customer_id, $cash_withdraw_id, $bank_withdraw_id) {
+    private function editLoanDetails($loan_id, $loan_interest, $loan_amount, $total_loan_amount, $installment_amount, $payment_days, $start_date, $end_date, $duration, $customer_id, $cash_withdraw_id, $bank_withdraw_id,$cheque_no) {
         try{
             DB::table('customer_loan')->where('id',$loan_id)->update([
                 'interest_rate'=>$loan_interest,
@@ -802,7 +809,9 @@ class CustomerLoanController
                 'end_date'=>$end_date,
                 'duration'=>$duration,
                 'cash_book_id'=>$cash_withdraw_id,
-                'bank_book_id'=>$bank_withdraw_id
+                'bank_book_id'=>$bank_withdraw_id,
+                'due_amount'=>$total_loan_amount,
+                'cheque_no'=>$cheque_no
             ]);
 
             $updated_loan = DB::table('customer_loan')->where('id',$loan_id)->first();
