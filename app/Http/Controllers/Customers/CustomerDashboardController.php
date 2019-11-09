@@ -11,6 +11,7 @@ namespace App\Http\Controllers\Customers;
 
 
 use App\Customer;
+use App\DisableCustomer;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -45,7 +46,7 @@ class CustomerDashboardController
     public function addCustomer(Request $request) {
         $validate = Validator::make ($request->all (),[
             'name' => 'required|string|max:255',
-            'customer_no'=>'required|unique:customer',
+            'customer_no'=>'required',
             'nic'=>'required|string|min:10',
             'contact_no'=>'required|regex:/[0-9]{10}/',
             'addLine1'=>'required',
@@ -68,18 +69,20 @@ class CustomerDashboardController
                     'city'=>$request->city,
                     'contact_no'=>$request->contact_no,
                     'status'=>"active",
-                    'salesRep_id'=>1,
-                    'route_id'=>$request->route_id
+                    'route_id'=>$request->route_id,
+                    'str_code'=>"A"
                 ]);
                 if ($customer){
                     $monthlyGrowth = $this->customerController->getMonthlyGrowth();
                     $count = $this->customerController->getTotalCustomers();
+                    $update_disable = $this->changeCustomerDisableStatus($request['customer_no']);
                     return response()->json([
                         'error'=>false,
                         'message'=>"customer added successfully",
                         'customer'=>$customer,
                         'monthlyGrowth'=>$monthlyGrowth,
-                        'count'=>$count
+                        'count'=>$count,
+                        'disable_status'=>$update_disable
                     ]);
                 }
             }catch (Exception $e){
@@ -89,6 +92,19 @@ class CustomerDashboardController
                 ]);
             }
 
+        }
+    }
+
+    private function changeCustomerDisableStatus($customer_no) {
+        $result = DB::table('disable_customers')->where('customer_no','=',$customer_no)
+            ->where('status','=',"Disable")
+            ->update([
+                'status'=>"Used"
+            ]);
+        if ($result>0) {
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -115,12 +131,29 @@ class CustomerDashboardController
         }
     }
 
-    public function getCustomerNumber() {
+    public function getCustomerNumbers() {
+
+        $disable_numbers = DB::table('disable_customers')
+            ->where('status','=',"Disable")
+            ->whereNull('deleted_at')
+            ->orderBy('customer_no','asc')
+            ->take(5)
+            ->select('customer_no')
+            ->pluck('customer_no');
+
         $customer_no = DB::table('customer')->orderBy('customer_no', 'desc')->select('customer_no')->pluck('customer_no')->first();
+
+        $arr_length = $disable_numbers->count();
+
+        if ( $arr_length < 5) {
+            for ($i=0; $i<5-$arr_length; $i++) {
+                $disable_numbers->push($customer_no + ($i+1)) ;
+            }
+        }
 
         return response()->json([
             'error' => false,
-            'customer_no' => $customer_no + 1
+            'customer_numbers' => $disable_numbers
         ]);
     }
 
@@ -179,7 +212,7 @@ class CustomerDashboardController
     }
 
     public function getCustomersToDisable() {
-        $d_cus = DB::table('customer')->where('status','!=',"disable")->whereNull('deleted_at')->get();
+        $d_cus = DB::table('customer')->where('status','!=',"Disable")->whereNull('deleted_at')->get();
 
         if ($d_cus->count()>0) {
             return response()->json([
@@ -192,5 +225,46 @@ class CustomerDashboardController
                 'message'=>"Error!"
             ]);
         }
+    }
+    //TODO when get deactivate customers use customer number and str_code
+    public function disableCustomers(Request $request) {
+        $selected_arr = $request['selected_arr'];
+        foreach ($selected_arr as $cus) {
+            $result = $this->disableCustomer($cus['id'], $cus['customerNo']);
+            if ($result!=null) {
+                $this->updateCustomer($cus['id']);
+            }
+        }
+
+        $d_cus = DB::table('customer')->where('status','!=',"Disable")->whereNull('deleted_at')->get();
+
+        return response()->json([
+            'error'=>false,
+            'd_cus'=>$d_cus
+        ]);
+    }
+
+    private function disableCustomer($customer_id, $customer_no) {
+        try{
+            $disable_customer = new DisableCustomer();
+            $disable_customer->customer_id = $customer_id;
+            $disable_customer->customer_no = $customer_no;
+            $disable_customer->status = "Disable";
+            $disable_customer->disable_count = 0;
+            $disable_customer->save();
+            return $disable_customer;
+        } catch (Exception $e) {
+            return null;
+        }
+    }
+
+    private function updateCustomer($customer_id) {
+        $result = DB::table('customer')->where('id','=',$customer_id)
+            ->update([
+                'status'=>"Disable",
+                'str_code'=>"D"
+            ]);
+
+        return $result;
     }
 }
