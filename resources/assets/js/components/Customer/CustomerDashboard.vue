@@ -16,7 +16,7 @@
                             <v-list-tile>
                                 <v-list-tile-content>
                                     <v-btn class="btn-outline" @click="disableCustomers">
-                                        Disable Customers
+                                        Deactivate Customers
                                     </v-btn>
                                 </v-list-tile-content>
                             </v-list-tile>
@@ -112,10 +112,10 @@
                             hide-details
                         ></v-text-field>
                         <v-spacer></v-spacer>
+                        <v-btn color="primary" dark class="mb-2" @click="onClickNewCustomer">New
+                            Customer
+                        </v-btn>
                         <v-dialog v-model="dialog" persistent max-width="900px">
-                            <v-btn slot="activator" color="primary" dark class="mb-2" @click="onClickNewLoan">New
-                                Customer
-                            </v-btn>
                             <v-card ref="form">
                                 <v-card-title class="pb-0">
                                     <span class="headline">{{ formTitle }}</span>
@@ -238,21 +238,63 @@
                         <v-card-title>
                             {{ disableCustomersDialogTitle }}
                             <v-spacer></v-spacer>
-                            <v-btn class="btn-rounded" dark color="#ff6761">disable</v-btn>
+                            <v-btn class="btn-rounded" dark color="#ff6761" @click="onClickDisable">Deactivate</v-btn>
                         </v-card-title>
                         <v-data-table
                             v-model="selected_arr"
                             :headers="headers_d"
                             :items="d_cus"
-                            item-key="customerNo"
-                            show-select
                             class="elevation-1"
                         >
+                            <template slot="items" slot-scope="props">
+                                <tr @click="selectDisable(props.item)" :class="{'primary': props.item.isSelected}">
+                                    <td>{{ props.item.customerNo }}</td>
+                                    <td>{{ props.item.nicNo }}</td>
+                                    <td class="text-xs-left">{{ props.item.customerName }}</td>
+                                    <td class="text-xs-left">{{ props.item.status }}</td>
+                                </tr>
+                            </template>
                         </v-data-table>
+                        <v-flex>
+                            <v-chip v-for="item in selected_arr" :key="item.customerNo" color="red" text-color="white">{{item.customerNo}}</v-chip>
+                        </v-flex>
                         <v-card-actions>
-                            <v-btn color="red darken-1" @click="disableCustomersDialog=false" flat="flat">Cancel
+                            <v-flex text-xs-center>
+                                <v-btn color="red darken-1" @click="disableCustomerCancel" flat="flat">Cancel</v-btn>
+                            </v-flex>
+                        </v-card-actions>
+                    </v-card>
+                </v-dialog>
+            </v-layout>
+            <v-layout row justify-center>
+                <v-dialog v-model="customerNumbersDialog" max-width="300" scrollable persistent>
+                    <v-card>
+                        <v-card-title>
+                            <h3>{{ customerNumbersDialogTitle }}</h3>
+                        </v-card-title>
+                        <v-card-text>
+                            <v-radio-group v-model="cust_no">
+                                <v-radio
+                                    v-for="n in customer_numbers"
+                                    :key="n"
+                                    :label="`${n}`"
+                                    :value="n"
+                                ></v-radio>
+                            </v-radio-group>
+                            <v-text-field
+                                outline
+                                clearable
+                                label="Own Number"
+                                placeholder="12345"
+                                v-model="cust_no"
+                            ></v-text-field>
+                        </v-card-text>
+                        <v-card-actions>
+                            <v-btn color="red darken-1" @click="customerNumbersDialog=false" flat="flat">Cancel
                             </v-btn>
                             <v-spacer></v-spacer>
+                            <v-btn color="green darken-1" @click="onclickContinue" flat="flat">Continue
+                            </v-btn>
                         </v-card-actions>
                     </v-card>
                 </v-dialog>
@@ -384,8 +426,12 @@
                         value: 'status'
                     }
                 ],
-                selected_arr:[],
-                d_cus:[],
+                selected_arr: [],
+                d_cus: [],
+                customer_numbers: [],
+                customerNumbersDialog: false,
+                customerNumbersDialogTitle: "Customer Numbers",
+                cust_no: 0,
             }
         },
         computed: {
@@ -747,7 +793,7 @@
                 if (this.selectedId === -1) {
                     if (this.deactivate) {
                         this.customers = this.customers.filter((customer) => {
-                            return customer.status === 'deactive'
+                            return customer.status === 'disable'
                         })
                     } else {
                         this.customers = this.sortCustomers
@@ -758,7 +804,7 @@
                             return customer.route_id === this.selectedId;
                         });
                         this.customers = this.customers.filter((customer) => {
-                            return customer.status === 'deactive'
+                            return customer.status === 'disable'
                         })
                     } else {
                         this.customers = this.sortCustomers.filter((customer) => {
@@ -774,10 +820,18 @@
                     }
                 });
             },
-            onClickNewLoan() {
-                this.getCustomerNumber();
+            onClickNewCustomer() {
+                this.getCustomerNumbers();
                 this.setRoutes();
                 this.resetSelectedRoutes();
+                this.flushCustomerNumberRadioModel();
+                this.showCustomerNumbersDialog();
+            },
+            showCustomerNumbersDialog() {
+                this.customerNumbersDialog = true;
+            },
+            flushCustomerNumberRadioModel() {
+                this.cust_no = 0;
             },
             disableField() {
                 this.isDisable = true;
@@ -785,12 +839,12 @@
             enableField() {
                 this.isDisable = false;
             },
-            getCustomerNumber() {
+            getCustomerNumbers() {
                 axios.defaults.headers.common = {
                     'X-Requested-With': 'XMLHttpRequest',
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 };
-                axios.get('/getCustomerNumber').then((response) => {
+                axios.get('/getCustomerNumbers').then((response) => {
                     if (response.status === 200) {
                         console.log(response);
                         if (response.data.error) {
@@ -802,7 +856,7 @@
                                 fontsize: '20px'
                             });
                         } else {
-                            this.populateCustomerNumber(response.data.customer_no);
+                            this.populateCustomerNumbers(response.data.customer_numbers);
                         }
 
                     }
@@ -818,6 +872,15 @@
             },
             populateCustomerNumber(customer_no) {
                 this.editedItem.customerNo = customer_no;
+            },
+            populateCustomerNumbers(numbers) {
+                this.flushCustomerNumbers();
+                numbers.forEach((num) => {
+                    this.customer_numbers.push(num);
+                })
+            },
+            flushCustomerNumbers() {
+                this.customer_numbers.splice(0, this.customer_numbers.length);
             },
             setRoutes() {
                 this.editedItem.route = this.routesCopy;
@@ -860,21 +923,65 @@
                     });
                 });
             },
-            disableCustomerRequest() {
+            pushDisabling (customers){
+                this.flushDisableList();
+                customers.forEach((cus)=>{
+                    this.d_cus.push({
+                        id: cus.id,
+                        customerNo: cus.customer_no,
+                        customerName: cus.name,
+                        nicNo: cus.NIC,
+                        status: cus.status
+                    })
+                });
+            },
+            flushDisableList() {
+                this.d_cus.splice(0, this.d_cus.length);
+            },
+            onclickContinue() {
+                if (this.validateCustomerNumber()) {
+                    this.customerNumbersDialog = false;
+                    this.editedItem.customerNo = this.cust_no;
+                    this.dialog = true;
+                }
+            },
+            validateCustomerNumber() {
+                if (this.cust_no === 0 || this.cust_no === '') {
+                    this.$notify({
+                        group: 'auth',
+                        title: 'Error',
+                        type: 'error',
+                        text: "Please select valid customer number to proceed",
+                        fontsize: '20px'
+                    });
+                    return false;
+                } else {
+                    return true;
+                }
+            },
+            onClickDisable() {
+                console.log(this.selected_arr);
+                if (this.validateDisableCustomerRequest() === true) {
+                    this.disableCustomersRequest();
+                    this.disableCustomersDialog = false;
+                } else {
+                    this.$notify({
+                        group: 'auth',
+                        title: 'Empty',
+                        type: 'error',
+                        text: "You have not selected any customers!",
+                        fontsize: '20px'
+                    });
+                }
+            },
+            disableCustomersRequest() {
                 this.$Progress.start();
                 axios.defaults.headers.common = {
                     'X-Requested-With': 'XMLHttpRequest',
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 };
-                axios.post('/editCustomer', {
-                    customer_no: item.customerNo,
-                    name: item.customerName,
-                    nic: item.nicNo,
-                    addLine1: item.addLine1,
-                    addLine2: item.addLine2,
-                    city: item.city,
-                    contact_no: item.contactNo,
-                    route_id: this.routeId !== 0 ? this.routeId : item.route_id
+                axios.post('/disableCustomers', {
+                    selected_arr: this.selected_arr,
                 }).then((response) => {
                     console.log(response);
                     if (response.status === 200) {
@@ -896,7 +1003,7 @@
                                 text: response.data.message,
                                 fontsize: '20px'
                             });
-                            this.pushDisabling();
+                            this.pushDisabling(response.data.d_cus);
                         }
                     }
                 }).catch((error) => {
@@ -909,15 +1016,30 @@
                     });
                 });
             },
-            pushDisabling (customers){
-                customers.forEach((cus)=>{
-                    this.d_cus.push({
-                        customerNo: cus.customer_no,
-                        customerName: cus.name,
-                        nicNo: cus.NIC,
-                        status: cus.status,
-                    })
+            validateDisableCustomerRequest() {
+                return this.selected_arr.length !== 0;
+            },
+            selectDisable(item) {
+                let prevState = false;
+                this.selected_arr.forEach((selectedItem) => {
+                    if (item.customerNo === selectedItem.customerNo){
+                        prevState = true;
+                    }
                 });
+                if (!prevState) {
+                    this.$set(item, "isSelected", true);
+                    this.selected_arr.push(item);
+                } else {
+                    this.$delete(item, "isSelected");
+                    this.selected_arr.splice(this.selected_arr.indexOf(item),1);
+                }
+            },
+            disableCustomerCancel() {
+                this.selected_arr.splice(0, this.selected_arr.length);
+                this.d_cus.forEach((item)=>{
+                    this.$delete(item, "isSelected");
+                });
+                this.disableCustomersDialog=false;
             }
         }
     }
