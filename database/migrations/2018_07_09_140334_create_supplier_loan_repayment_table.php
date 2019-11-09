@@ -16,12 +16,16 @@ class CreateSupplierLoanRepaymentTable extends Migration
         Schema::create('supplier_loan_repayment', function (Blueprint $table) {
             $table->increments('id');
             $table->integer ('loan_id');
+            $table->date('date');
             $table->float ('amount');
-            $table->float ('remaining_amount');
-            $table->integer ('installment_count');
-            $table->integer ('supplier_id');
-            $table->integer ('cash_book_id');
-            $table->integer ('bank_book_id');
+            $table->string('bank')->nullable();
+            $table->date('banking_date')->nullable();
+            $table->string('type');
+            $table->integer('cheque_no')->nullable();
+            $table->float ('remaining_amount')->nullable();
+            $table->integer ('installment_count')->nullable();
+            $table->integer ('cash_book_id')->nullable();
+            $table->integer ('bank_book_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
