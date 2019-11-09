@@ -91,7 +91,9 @@ Route::get('/getCustomersToDisable', 'Customers\CustomerDashboardController@getC
 
 Route::post('/addCustomerToDb', 'Customers\CustomerDashboardController@addCustomer');
 
-Route::get('/getCustomerNumber', 'Customers\CustomerDashboardController@getCustomerNumber');
+Route::get('/getCustomerNumbers', 'Customers\CustomerDashboardController@getCustomerNumbers');
+
+Route::post('/disableCustomers','Customers\CustomerDashboardController@disableCustomers');
 
 Route::post('/editCustomer', 'Customers\CustomerDashboardController@editCustomer');
 
@@ -162,6 +164,16 @@ Route::post('/cashBookAmountUpdate','Settings\SettingsController@cashBookAmountU
 Route::get('/getInitialDataDSummary','dailySummary\DailySummaryController@getInitialData');
 
 Route::get('/getInitialDataDaySheet','Reports\DaySheet\DaySheet@getInitialData');
+
+Route::post('/daySheetDataByDate','Reports\DaySheet\DaySheet@getDataByDate');
+
+Route::get('/getInitialDataPaySheet','Reports\PaySheet\PaySheetController@getInitialData');
+
+Route::post('/daySheetSaveReq', 'Reports\DaySheet\DaySheet@storeDaySheetData');
+
+Route::post('/getPayData','Reports\PaySheet\PaySheetController@getPayDataForSalesRep');
+
+Route::post('/addSalaryPayment','Reports\PaySheet\PaySheetController@addSalaryPayment');
 
 Route::get('{any}', function () {
     return view('Dashboard.mainDashboard');
