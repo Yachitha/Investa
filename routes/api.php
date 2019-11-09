@@ -30,4 +30,5 @@ Route::group(['middleware'=>'api'],function (){
     Route::post('/getTotalAndInstallment','Loans\CustomerLoanController@getBasicLoanDetails');
     Route::post('/editCustomerLoan','Loans\CustomerLoanController@editCustomerLoan');
     Route::post('/addOtherExpense','Expenses\ExpenseController@addOtherExpense');
+    Route::post('/daySheetDataByDate','Reports\DaySheet\DaySheet@getDataByDate');
 });
