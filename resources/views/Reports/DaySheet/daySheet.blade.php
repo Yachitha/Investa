@@ -7,7 +7,7 @@
     <link href="{{ url ('pixeladmin-lite/html/bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet">
     <style type="text/css">
         @page {
-            margin: 0;
+            margin: 5px;
         }
 
         body {
@@ -59,25 +59,25 @@
 
 </head>
 <body>
-
+<p>Hello world</p>
 <div class="container-fluid">
     <div class="row">
         <div class="col-lg-6">
             <h3>SOUTHERN INVESTMENT</h3>
         </div>
         <div class="col-md-6 pull-right text-right">
-            <h3>Day Sheet- 2018/11/22</h3>
+            <h3>Day Sheet- {{$date}}</h3>
         </div>
     </div>
     <div class="row">
         <div class="col-lg-4">
-            <p>Route: AMBALANGODA</p>
+            <p>Route: {{$route_name}}</p>
         </div>
         <div class="col-lg-4 text-center">
-            <p>Sales Rep:</p>
+            <p>Sales Rep: {{$sales_rep}}</p>
         </div>
         <div class="col-lg-4 pull-right text-right">
-            <p>Due Total Collection: 81520.00</p>
+            <p>Due Total Collection: {{$due_total}}</p>
         </div>
     </div>
     <br/>
@@ -96,12 +96,12 @@
                 </thead>
                 <tbody>
                 <tr>
-                    <td>0.00</td>
-                    <td>1500.00</td>
-                    <td>0.00</td>
-                    <td>0.00</td>
-                    <td>1500.00</td>
-                    <td>0.00</td>
+                    <td>{{$bf_amount}}</td>
+                    <td>{{$total_col}}</td>
+                    <td>{{$loan_cash+$loan_che}}</td>
+                    <td>{{$extra_ex}}</td>
+                    <td>{{$balance}}</td>
+                    <td>{{$access}}</td>
                 </tr>
                 </tbody>
             </table>

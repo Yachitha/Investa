@@ -103,7 +103,7 @@
                                             <v-text-field
                                                 label="End Date"
                                                 v-model="endDate"
-                                                disabled
+
                                             ></v-text-field>
                                         </v-flex>
                                     </v-flex>
@@ -210,13 +210,15 @@
                         <v-card-text>
                             <v-data-table :headers="headers" :items="loans" class="elevation-1">
                                 <template slot="items" slot-scope="props">
-                                    <td>{{ props.item.no }}</td>
-                                    <td>{{ props.item.amount }}</td>
-                                    <td>{{ props.item.interest }}</td>
-                                    <td>{{ props.item.daysCount }}</td>
-                                    <td>{{ props.item.installment }}</td>
-                                    <td>{{ props.item.total }}</td>
-                                    <td>{{ props.item.due }}</td>
+                                    <tr @click="onClickLoan(props.item)">
+                                        <td>{{ props.item.no }}</td>
+                                        <td>{{ props.item.amount }}</td>
+                                        <td>{{ props.item.interest }}</td>
+                                        <td>{{ props.item.daysCount }}</td>
+                                        <td>{{ props.item.installment }}</td>
+                                        <td>{{ props.item.total }}</td>
+                                        <td>{{ props.item.due }}</td>
+                                    </tr>
                                 </template>
                                 <template slot="no-data">
                                     <v-alert :value="true" color="error" icon="warning">
@@ -399,6 +401,42 @@
                     </v-card>
                 </v-dialog>
             </v-layout>
+            <v-layout row justify-center>
+                <v-dialog v-model="loanRepaymentDetailsDialog" max-width="700" scrollable persistent>
+                    <v-card>
+                        <v-card-title>
+                            <h3>{{ loanRepaymentDetailsDialogTitle }}</h3>
+                        </v-card-title>
+                        <v-card-text>
+                            <v-data-table
+                                :headers="loanRepaymentsHeader"
+                                :items="loanRepayments"
+                                class="elevation-1"
+                            >
+                                <template slot="items" slot-scope="props">
+                                    <tr :class="{'primary': props.item.isSelected}">
+                                        <td>{{ props.item.paymentNo }}</td>
+                                        <td>{{ props.item.paymentDate }}</td>
+                                        <td>{{ props.item.paymentAmount }}</td>
+                                    </tr>
+                                </template>
+                                <template slot="no-data">
+                                    <v-alert :value="true" color="error" icon="warning">
+                                        This loan has no payments yet :(
+                                    </v-alert>
+                                </template>
+                            </v-data-table>
+                        </v-card-text>
+                        <v-card-actions>
+                            <v-flex text-xs-center>
+                                <v-btn color="green darken-1" @click="onclickOkForLoanRepayment" flat="flat">
+                                    OK
+                                </v-btn>
+                            </v-flex>
+                        </v-card-actions>
+                    </v-card>
+                </v-dialog>
+            </v-layout>
         </v-container>
     </v-app>
 </template>
@@ -564,7 +602,30 @@
                 loanClearConfirmMessage:"",
                 loanClearSuccessDialog:false,
                 loanClearSuccessTitle:"Loan cleared successfully",
-                loanClearSuccessMessage:"specified loan was cleared and you can assign a new loan to this customer"
+                loanClearSuccessMessage:"specified loan was cleared and you can assign a new loan to this customer",
+                loanRepayments: [],
+                loanRepaymentsHeader: [
+                    {
+                        text: 'Payment No',
+                        align: 'left',
+                        sortable: false,
+                        value: 'paymentNo'
+                    },
+                    {
+                        text: 'Payment Date',
+                        align: 'left',
+                        sortable: false,
+                        value: 'paymentDate'
+                    },
+                    {
+                        text: 'Payment Amount',
+                        align: 'left',
+                        sortable: false,
+                        value: 'paymentAmount'
+                    }
+                ],
+                loanRepaymentDetailsDialog:false,
+                loanRepaymentDetailsDialogTitle:"Loan Payment Details"
             }
         },
         methods: {
@@ -949,6 +1010,7 @@
                     customer_id: this.customerId,
                     cheque_no: this.chequeNo
                 }).then((response) => {
+                    console.log(response);
                     if (response.status === 200) {
                         if (response.data.error) {
                             this.$Progress.fail();
@@ -1212,10 +1274,64 @@
                 this.flushLoanData();
                 this.flushExistingLoanData();
                 this.getData();
+            },
+            onClickLoan(item) {
+                this.loanDetailsRequest(item.no);
+                this.loanRepaymentDetailsDialog=true;
+            },
+            loanDetailsRequest(loan_no) {
+                this.$Progress.start();
+                axios.defaults.headers.common = {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                };
+                axios.post('/getLoanDetailsForNo', {
+                    loan_no: loan_no
+                }).then((response) => {
+                    if (response.status === 200) {
+                        if (response.data.error) {
+                            this.$Progress.fail();
+                            this.$notify({
+                                group: 'auth',
+                                title: 'Error',
+                                type: 'error',
+                                text: response.data.message,
+                                fontsize: '20px'
+                            });
+                        } else {
+                            this.$Progress.finish();
+                            this.publishLoanDetails(response.data.loan_details);
+                        }
+
+                    }
+                }).catch((error) => {
+                    console.log(error);
+                    this.$Progress.fail();
+                    this.$notify({
+                        group: 'auth',
+                        title: 'Error',
+                        type: 'error',
+                        text: error,
+                        fontsize: '20px'
+                    });
+                });
+            },
+            publishLoanDetails(repayments) {
+                this.flushLoanDetails();
+                repayments.forEach((repayment)=>{
+                    this.loanRepayments.push({
+                        paymentNo:repayment.id,
+                        paymentDate:repayment.created_at,
+                        paymentAmount:repayment.amount
+                    });
+                });
+            },
+            flushLoanDetails() {
+                this.loanRepayments.splice(0,this.loanRepayments.length);
+            },
+            onclickOkForLoanRepayment() {
+                this.loanRepaymentDetailsDialog=false;
             }
-        },
-        mounted() {
-            console.log("Load Completed");
         },
         created() {
             this.disableFields();

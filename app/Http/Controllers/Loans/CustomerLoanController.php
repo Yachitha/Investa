@@ -14,6 +14,7 @@ use App\Cash_book;
 use App\Customer;
 use App\Customer_loan;
 use App\Customer_repayment;
+use App\Http\Controllers\Customers\CustomerController;
 use App\SalesRepCommission;
 use Carbon\Carbon;
 use Exception;
@@ -27,6 +28,13 @@ use Illuminate\Support\Facades\Validator;
 
 class CustomerLoanController
 {
+
+    protected $customerController;
+
+    public function __construct(CustomerController $controller)
+    {
+        $this->customerController = $controller;
+    }
     /**
      * @param Request $request
      * @return JsonResponse
@@ -230,8 +238,8 @@ class CustomerLoanController
                 $end_date = $request['end_date'];
                 $salesRep_id = $request['salesRep_id'];
                 $commission_rate = $request['commission_rate'];
-                $cash_amount = $request['cash_amount'];
-                $bank_amount = $request['bank_amount'];
+                $cash_amount = (float) $request['cash_amount'];
+                $bank_amount = (float) $request['bank_amount'];
                 $loan_interest = $request['loan_interest'];
                 $payment_days = $request['payment_days'];
                 $customer_id = $request['customer_id'];
@@ -240,10 +248,10 @@ class CustomerLoanController
                 $customer_name = DB::table('customer')->where('id', '=', $customer_id)->select('name')->pluck('name')->first();
                 $cash_withdraw_id = null;
                 $bank_withdraw_id = null;
-                if ($cash_amount != 0) {
+                if ($cash_amount > 0) {
                     $cash_withdraw_id = $this->addCashBookRecord($customer_name, $cash_amount);
                 }
-                if ($bank_amount != 0) {
+                if ($bank_amount > 0) {
                     $bank_withdraw_id = $this->addBankBookRecord($customer_name, $bank_amount, $cheque_no);
                 }
 
@@ -256,16 +264,14 @@ class CustomerLoanController
                     $customer_loan_id = $this->addLoan($loan_no, $loan_interest, $loan_amount, $total_loan_amount, $installment_amount, $payment_days, $start_date, $end_date, $duration, $customer_id, $cash_withdraw_id, $bank_withdraw_id, $cheque_no);
                 }
 
-                $this->addInitialRepaymentColumn($customer_loan_id, $payment_days, $total_loan_amount);
-
                 $customer = Customer::where('id', $request['customer_id'])->first();
 
-                if ($customer) {
+                if ($customer && $customer_loan_id!=null) {
                     $customer->status = "ongoing";
                     $customer->save();
+                    $this->addInitialRepaymentColumn($customer_loan_id, $payment_days, $total_loan_amount);
+                    $this->addSalesRepCommission($commission_rate, $loan_amount, Carbon::now(), $customer_loan_id, $salesRep_id);
                 }
-
-                $this->addSalesRepCommission($commission_rate, $loan_amount, Carbon::now(), $customer_loan_id, $salesRep_id);
 
             } else {
                 return response()->json([
@@ -296,7 +302,7 @@ class CustomerLoanController
 
             if ($status == "active") {
                 return $active = true;
-            } elseif ($status == "deactive" || $status == "ongoing") {
+            } elseif ($status == "Disable" || $status == "ongoing") {
                 return $active = false;
             } else {
                 return $active = false;
@@ -607,7 +613,7 @@ class CustomerLoanController
                 $new_commission = $this->editSalesRepCommission($loan_id,$commission_rate,$salesRep_id,$this->calculateLoanAmount($cash_amount,$bank_amount));
                 $new_initial_repayment = $this->editInitialRepayment($loan_id,0,$this->calculateLoanAmount($cash_amount,$bank_amount));
                 $total_loan_amount = $this->totalLoanAmount($cash_amount,$bank_amount,$duration,$loan_interest);
-                $updated_loan = $this->editLoanDetails($loan_id,$loan_interest,$this->calculateLoanAmount($cash_amount,$bank_amount),$total_loan_amount,$this->calculateInstallmentAmount($total_loan_amount,$duration),$payment_days,$start_date,$end_date,$duration,$customer_id,$new_cash_book_id,$new_bank_book_id);
+                $updated_loan = $this->editLoanDetails($loan_id,$loan_interest,$this->calculateLoanAmount($cash_amount,$bank_amount),$total_loan_amount,$this->calculateInstallmentAmount($total_loan_amount,$duration),$payment_days,$start_date,$end_date,$duration,$customer_id,$new_cash_book_id,$new_bank_book_id,$cheque_no);
                 $updated_loan->due_amount = $this->getDueAmount($updated_loan->id, $total_loan_amount);
                 $updated_loan->commission = $this->getLoanCommission($updated_loan->id);
                 $updated_loan->cash_amount = $this->getCashAmount($updated_loan->cash_book_id);
@@ -794,6 +800,7 @@ class CustomerLoanController
      * @param $customer_id
      * @param $cash_withdraw_id
      * @param $bank_withdraw_id
+     * @param $cheque_no
      * @return Model|Builder|object|null
      */
 
@@ -1004,6 +1011,7 @@ class CustomerLoanController
      * @param Request $request
      * @return JsonResponse
      */
+    //TODO complete the function as update due_amount in customer_loan as well as updating remaining_amount in customer_loan_repayment
     public function clearCustomerLoan(Request $request) {
         $loan_id = $request['loan_id'];
         $loan = DB::table('customer_loan')->where('id','=',$loan_id)->first();
@@ -1013,21 +1021,25 @@ class CustomerLoanController
         $last_repayment = DB::table('customer_loan_repayment')->where('loan_id','=',$loan_id)->get()->last();
         $last_row_bank = DB::table('bank_book')->orderBy('id', 'desc')->first();
         $last_row_cash = DB::table('cash_book')->orderBy('id', 'desc')->first();
+        $bank_book_id = null;
+        $cash_book_id = null;
         if(!empty($loan)) {
-            if ($last_repayment->remaining_amount) {
+            if ($last_repayment->remaining_amount>0) {
                 if($loan->cash_book_id!=null) {
-                    $this->addLoanClearCashBookEntry($loan->loan_no,$customer_no,$last_repayment->remaining_amount,$last_row_cash->balance);
+                    $cash_book_id = $this->addLoanClearCashBookEntry($loan->loan_no,$customer_no,$last_repayment->remaining_amount,$last_row_cash->balance);
                 }
                 if($loan->bank_book_id!=null) {
-                    $this->addLoanClearBankBookEntry($loan->loan_no,$customer_no,$last_repayment->remaining_amount,$last_row_bank->balance,0);
+                    $bank_book_id = $this->addLoanClearBankBookEntry($loan->loan_no,$customer_no,$last_repayment->remaining_amount,$last_row_bank->balance,0);
                 }
                 $customer_update = DB::table('customer')->where('id','=',$customer_id)->update([
                     'status'=>"active"
                 ]);
-                if ($customer_update>0) {
+                $adjustment_payment = $this->adjustmentToRepayment($loan_id,$bank_book_id,$cash_book_id,$last_repayment->remaining_amount,$last_repayment->installment_count+1);
+                $loan_update = $this->updateLoan($loan_id);
+                if ($customer_update>0 && $adjustment_payment!=null && $loan_update>0) {
                     return response()->json([
                         'error'=>false,
-                        'message'=>"Loan cleared"
+                        'message'=>"Loan cleared",
                     ]);
                 } else {
                     return response()->json([
@@ -1047,6 +1059,34 @@ class CustomerLoanController
                 'message'=>"Loan not found!"
             ]);
         }
+    }
+
+    private function adjustmentToRepayment($loan_id, $bank_book_id, $cash_book_id, $amount, $installment_count) {
+        try {
+            $repayment = new Customer_repayment();
+            $repayment->loan_id = $loan_id;
+            $repayment->bank_book_id = $bank_book_id;
+            $repayment->cash_book_id = $cash_book_id;
+            $repayment->amount = $amount;
+            $repayment->installment_count = $installment_count;
+            $repayment->remaining_amount = 0.00;
+            $repayment->save();
+
+            return $repayment->id;
+        } catch(Exception $e){
+            return null;
+        }
+    }
+
+    private function updateLoan($loan_id) {
+        $count = DB::table('customer_loan')
+            ->where('id','=',$loan_id)
+            ->update([
+                'due_amount'=>0,
+                'updated_at'=>Carbon::now()
+            ]);
+
+        return $count;
     }
 
     /**
@@ -1096,5 +1136,45 @@ class CustomerLoanController
         } catch (Exception $e) {
             return null;
         }
+    }
+
+    public function getLoanDetailsByNumber(Request $request) {
+        $loan_number = $request['loan_no'];
+
+        $loan_id = DB::table('customer_loan')->where('loan_no','=',$loan_number)
+            ->select('id')
+            ->pluck('id');
+
+        $loan_details = DB::table('customer_loan_repayment')->where('loan_id','=',$loan_id)
+            ->get();
+
+        return response()->json([
+            'error'=>false,
+            'loan_details'=>$loan_details
+        ]);
+    }
+
+    //check again
+    public function getLoanList() {
+        $loans=[];
+        $routes = DB::table('route')->get();
+        if (!empty($routes)) {
+            foreach ($routes as $route) {
+                $customerSet = $this->customerController->getCustomersByRouteId($route->id);
+                foreach ($customerSet as $customer) {
+                    $loanSet = $this->customerController->getLoansByCustomerId($customer);
+                    $item = [
+                        'route_id'=>$route->id,
+                        'loans'=>$loanSet
+                    ];
+                    $loans[] = $item;
+                }
+            }
+        }
+        return response()->json([
+            'error' => false,
+            'loans' => $loans,
+            'routes' => $routes
+        ]);
     }
 }

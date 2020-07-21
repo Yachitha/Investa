@@ -41,7 +41,7 @@ Route::get('/dashboard', function () {
 Route::get('/dailySummary', function () {
     return view('Summary/dailySummary');
 });
-Route::get('/daySheet', function () {
+Route::get('/daySheet1', function () {
     return view('Reports.DaySheet.daySheet');
 });
 Route::get('/daySheetTest', function () {
@@ -101,6 +101,8 @@ Route::post('/deleteCustomer', 'Customers\CustomerDashboardController@deleteCust
 
 Route::get('/getCustomerList', 'Customers\CustomerListController@getCustomerList');
 
+Route::post('/customerLoanDetailsById','Customers\CustomerDashboardController@customerLoanDetailsById');
+
 Route::post('/getLoanDetailsForCustomer','Loans\CustomerLoanController@getLoanDetailsForCustomer');
 
 Route::get('/getLoanNumber','Loans\CustomerLoanController@getLoanNumber');
@@ -116,6 +118,8 @@ Route::post('/editCustomerLoan','Loans\CustomerLoanController@editCustomerLoan')
 Route::post('/deleteCustomerLoan','Loans\CustomerLoanController@deleteCustomerLoan');
 
 Route::post('/clearCustomerLoan','Loans\CustomerLoanController@clearCustomerLoan');
+
+Route::post('/getLoanDetailsForNo','Loans\CustomerLoanController@getLoanDetailsByNumber');
 
 Route::post('/getCashBookRecords','CashBook\CashBookController@getCashBookRecords');
 
@@ -163,6 +167,10 @@ Route::post('/cashBookAmountUpdate','Settings\SettingsController@cashBookAmountU
 
 Route::get('/getInitialDataDSummary','dailySummary\DailySummaryController@getInitialData');
 
+Route::post('/dailySummaryDataByDate','dailySummary\DailySummaryController@getDataByDate');
+
+Route::post('/editRepaymentByNum','dailySummary\DailySummaryController@editRepaymentByNum');
+
 Route::get('/getInitialDataDaySheet','Reports\DaySheet\DaySheet@getInitialData');
 
 Route::post('/daySheetDataByDate','Reports\DaySheet\DaySheet@getDataByDate');
@@ -174,6 +182,22 @@ Route::post('/daySheetSaveReq', 'Reports\DaySheet\DaySheet@storeDaySheetData');
 Route::post('/getPayData','Reports\PaySheet\PaySheetController@getPayDataForSalesRep');
 
 Route::post('/addSalaryPayment','Reports\PaySheet\PaySheetController@addSalaryPayment');
+
+Route::post('/getMonthlySheetData','Reports\MonthlySheet\MonthlySheetController@getMonthlySheetData');
+
+Route::get('/getInitialDataCOReport','Reports\CustomerOutstandingReport\CustomerOutstandingReportController@getInitialDataCOReport');
+
+Route::post('/COReportByRoute','Reports\CustomerOutstandingReport\CustomerOutstandingReportController@getCOReportByRoute');
+
+Route::post('/expensesDetailsForReport','Reports\ExtraExpensesSummaryReport\ExtraExpensesSummaryReport@getExpensesDetails');
+
+Route::post('/incomeDetailsForReport','Reports\ExtraIncomeReport\ExtraIncomeReport@getIncomeDetails');
+
+Route::post('/NLReport','Reports\NewLoanReport\NewLoanReport@getNewLoans');
+
+Route::post('/daySheetPrintDetails','Reports\DaySheet\DaySheet@daySheetPrintDetails');
+
+Route::get('/getLoanList','Loans\CustomerLoanController@getLoanList');
 
 Route::get('{any}', function () {
     return view('Dashboard.mainDashboard');

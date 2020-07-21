@@ -72,4 +72,32 @@ class CustomerController extends Controller
             return null;
         }
     }
+
+    public function getLoanDetailsByCustomerId($id) {
+        $loans = DB::table('customer_loan')->where('customer_id','=',$id)->whereNull('deleted_at')
+            ->get();
+
+        foreach ($loans as $loan) {
+            $loan->repayments = DB::table('customer_loan_repayment')->where('loan_id','=',$loan->id)->whereNull('deleted_at')->get();
+        }
+
+        return $loans;
+    }
+
+    /**
+     * @param $customer
+     * @return \Illuminate\Support\Collection
+     * this only returns loan details without repayments
+     */
+    public function getLoansByCustomerId($customer) {
+        $loans = DB::table('customer_loan')->where('customer_id','=',$customer->id)->whereNull('deleted_at')
+            ->get();
+
+        foreach ($loans as $loan) {
+            $loan->route_id = $customer->route_id;
+            $loan->customer_no = $customer->customer_no;
+        }
+
+        return $loans;
+    }
 }

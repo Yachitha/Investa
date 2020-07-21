@@ -267,4 +267,13 @@ class CustomerDashboardController
 
         return $result;
     }
+
+    public function customerLoanDetailsById(Request $request) {
+        $loans = $this->customerController->getLoanDetailsByCustomerId($request['customer_id']);
+
+        return response()->json([
+            'error'=>false,
+            'loans'=>$loans
+        ]);
+    }
 }

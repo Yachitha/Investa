@@ -436,6 +436,7 @@
 
                     }
                 }).catch((error) => {
+                    console.log(error)
                     this.$notify({
                         group: 'auth',
                         title: 'Error',
@@ -497,8 +498,8 @@
                     total_comm += commission.commission_amount;
                     total_loan += commission.loan.loan_amount;
                 });
-                this.total_loan_amt = total_loan;
-                this.total_commission_amt = total_comm;
+                this.total_loan_amt = Number(total_loan).toLocaleString();
+                this.total_commission_amt = Number(total_comm).toLocaleString();
             },
             onChangeRep(id) {
                 this.salesRep_id = id;

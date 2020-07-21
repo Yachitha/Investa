@@ -53,11 +53,11 @@
                                                 </v-flex>
                                                 <v-flex xs12 sm6 md4>
                                                     <v-text-field v-model="editedSalesRep.nic" label="NIC"
-                                                                  ></v-text-field>
+                                                    ></v-text-field>
                                                 </v-flex>
                                                 <v-flex xs12 sm6 md4>
                                                     <v-text-field v-model="editedSalesRep.email" label="Email"
-                                                                  ></v-text-field>
+                                                    ></v-text-field>
                                                 </v-flex>
                                                 <v-flex xs12 sm6 md4>
                                                     <v-select color="light" label="Route" single-line
@@ -69,16 +69,16 @@
                                                 <v-flex xs12 sm6 md4>
                                                     <v-text-field v-model="editedSalesRep.addLine1"
                                                                   label="Address Line 1"
-                                                                  ></v-text-field>
+                                                    ></v-text-field>
                                                 </v-flex>
                                                 <v-flex xs12 sm6 md4>
                                                     <v-text-field v-model="editedSalesRep.addLine2"
                                                                   label="Address Line 2"
-                                                                  ></v-text-field>
+                                                    ></v-text-field>
                                                 </v-flex>
                                                 <v-flex xs12 sm6 md4>
                                                     <v-text-field v-model="editedSalesRep.city" label="City"
-                                                                  ></v-text-field>
+                                                    ></v-text-field>
                                                 </v-flex>
                                             </v-layout>
                                         </v-container>
@@ -104,15 +104,15 @@
                                 <td>{{ props.item.city }}</td>
                                 <td class="justify-center layout px-0 align-center">
                                     <v-icon
-                                            small
-                                            class="mr-2"
-                                            @click="editSalesRep(props.item)"
+                                        small
+                                        class="mr-2"
+                                        @click="editSalesRep(props.item)"
                                     >
                                         edit
                                     </v-icon>
                                     <v-icon
-                                            small
-                                            @click="deleteSalesRep(props.item)"
+                                        small
+                                        @click="deleteSalesRep(props.item)"
                                     >
                                         delete
                                     </v-icon>
@@ -126,7 +126,7 @@
                         </v-data-table>
                     </v-card>
                 </v-flex>
-<!--                route settings-->
+                <!--                route settings-->
                 <v-flex d-flex xs12 sm12 md12 mt-2>
                     <v-card color="dark" light>
                         <v-card-title class="blue--text text-lg-start">Route Settings</v-card-title>
@@ -153,6 +153,20 @@
                                                                   label="Name"></v-text-field>
                                                 </v-flex>
                                             </v-layout>
+                                            <v-layout row>
+                                                <v-flex xs12 sm6 md6>
+                                                    <v-text-field
+                                                        v-model="editedRoute.startNo"
+                                                        label="Start Number"
+                                                    ></v-text-field>
+                                                </v-flex>
+                                                <v-flex xs12 sm6 md6>
+                                                    <v-text-field
+                                                        v-model="editedRoute.endNo"
+                                                        label="End Number"
+                                                    ></v-text-field>
+                                                </v-flex>
+                                            </v-layout>
                                         </v-container>
                                     </v-card-text>
 
@@ -168,17 +182,19 @@
                             <template slot="items" slot-scope="props">
                                 <td>{{ props.item.no }}</td>
                                 <td>{{ props.item.name }}</td>
+                                <td>{{ props.item.startNo }}</td>
+                                <td>{{ props.item.endNo }}</td>
                                 <td class="justify-center layout px-0 align-center">
                                     <v-icon
-                                            small
-                                            class="mr-2"
-                                            @click="editRoute(props.item)"
+                                        small
+                                        class="mr-2"
+                                        @click="editRoute(props.item)"
                                     >
                                         edit
                                     </v-icon>
                                     <v-icon
-                                            small
-                                            @click="deleteRoute(props.item)"
+                                        small
+                                        @click="deleteRoute(props.item)"
                                     >
                                         delete
                                     </v-icon>
@@ -197,11 +213,11 @@
                         <v-card-title class="blue--text text-lg-start">Cash Book Settings</v-card-title>
                         <v-flex d-flex xs12 sm6 md6 mt-2 ml-3>
                             <v-text-field
-                                    v-model="initialCash"
-                                    outline
-                                    label="Cash Book Balance"
-                                    type="text"
-                                    :disabled="disabledCash"
+                                v-model="initialCash"
+                                outline
+                                label="Cash Book Balance"
+                                type="text"
+                                :disabled="disabledCash"
                             ></v-text-field>
                             <v-btn light small icon @click="onclickEditCashAmount">
                                 <v-icon>edit</v-icon>
@@ -264,8 +280,8 @@
                         <v-divider light></v-divider>
                         <v-card-text>
                             <v-text-field
-                                    label="Cash Amount"
-                                    v-model="initialCash"
+                                label="Cash Amount"
+                                v-model="initialCash"
                             ></v-text-field>
                         </v-card-text>
                         <v-card-actions>
@@ -334,20 +350,42 @@
                         sortable: false,
                         align: 'left',
                         value: 'city'
+                    },
+                    {
+                        text: "Actions",
+                        sortable: false,
+                        align: "left"
                     }
                 ],
                 headersRoute: [
                     {
                         text: "No",
                         sortable: false,
-                        align:'left',
-                        value:'no'
+                        align: 'left',
+                        value: 'no'
                     },
                     {
                         text: "Name",
                         sortable: false,
-                        align:'left',
-                        value:'name'
+                        align: 'left',
+                        value: 'name'
+                    },
+                    {
+                        text: "Start Customer No",
+                        sortable: false,
+                        align: 'left',
+                        value: 'startNo'
+                    },
+                    {
+                        text: "End Customer No",
+                        sortable: false,
+                        align: 'left',
+                        value: 'endNo'
+                    },
+                    {
+                        text: "Actions",
+                        sortable: false,
+                        align: "center"
                     }
                 ],
                 salesReps: [],
@@ -392,18 +430,22 @@
                 routeDialog: false,
                 editedIndexRoute: -1,
                 editedRoute: {
-                    no:'',
-                    name: ''
+                    no: '',
+                    name: '',
+                    startNo: 0,
+                    endNo: 0
                 },
                 defaultRoute: {
-                    no:'',
-                    name: ''
+                    no: '',
+                    name: '',
+                    startNo: 0,
+                    endNo: 0
                 },
                 routesMain: [],
                 deletedIndexRoute: -1,
-                initialCash:0,
+                initialCash: 0,
                 disabledCash: true,
-                cashAmountUpdateDialog:false,
+                cashAmountUpdateDialog: false,
                 cashAmountDialogTitle: "Update Cash Book Amount",
             }
         },
@@ -452,11 +494,11 @@
                     }
                 }
             },
-            validateNewSalesRepRequest () {
-                return this.editedSalesRep.no !== '' && this.editedSalesRep.name!== '' && this.editedSalesRep.addLine1!== '' && this.editedSalesRep.addLine2 !=='' && this.editedSalesRep.email !== '' && this.editedSalesRep.nic !== '' && this.editedSalesRep.city !== '';
+            validateNewSalesRepRequest() {
+                return this.editedSalesRep.no !== '' && this.editedSalesRep.name !== '' && this.editedSalesRep.addLine1 !== '' && this.editedSalesRep.addLine2 !== '' && this.editedSalesRep.email !== '' && this.editedSalesRep.nic !== '' && this.editedSalesRep.city !== '';
             },
             validateEditSalesRepRequest() {
-                return this.editedSalesRep.no !== '' && this.editedSalesRep.name!== '' && this.editedSalesRep.addLine1!== '' && this.editedSalesRep.addLine2 !=='' && this.editedSalesRep.email !== '' && this.editedSalesRep.nic !== '' && this.editedSalesRep.city !== '';
+                return this.editedSalesRep.no !== '' && this.editedSalesRep.name !== '' && this.editedSalesRep.addLine1 !== '' && this.editedSalesRep.addLine2 !== '' && this.editedSalesRep.email !== '' && this.editedSalesRep.nic !== '' && this.editedSalesRep.city !== '';
             },
             showValidationFailMessage() {
                 this.$notify({
@@ -536,28 +578,36 @@
                 routes.forEach((route) => {
                     this.editedSalesRep.routes.push({
                         id: route.id,
-                        name: route.name
+                        name: route.name,
+                        startNo: route.startNo,
+                        endNo: route.endNo
                     })
                 });
 
                 routes.forEach((route) => {
                     this.defaultSalesRep.routes.push({
                         id: route.id,
-                        name: route.name
+                        name: route.name,
+                        startNo: route.startNo,
+                        endNo: route.endNo
                     })
                 });
 
                 routes.forEach((route) => {
                     this.routes.push({
                         id: route.id,
-                        name: route.name
+                        name: route.name,
+                        startNo: route.startNo,
+                        endNo: route.endNo
                     })
                 });
 
                 routes.forEach((route) => {
                     this.routesMain.push({
                         no: route.id,
-                        name: route.name
+                        name: route.name,
+                        startNo: route.startNo,
+                        endNo: route.endNo
                     })
                 });
             },
@@ -565,14 +615,14 @@
                 this.routeId = id;
                 this.routes.forEach((route) => {
                     if (route.id === id) {
-                        this.selectedRoute = Object.assign({}, {id: route.id, name: route.name});
+                        this.selectedRoute = Object.assign({}, {id: route.id, name: route.name, startNo: route.startNo, endNo:route.endNo});
                     }
                 });
             },
             onClickNewSalesRep() {
                 this.getSalesRepNum();
             },
-            getSalesRepNum () {
+            getSalesRepNum() {
                 axios.defaults.headers.common = {
                     'X-Requested-With': 'XMLHttpRequest',
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
@@ -602,7 +652,7 @@
                     });
                 });
             },
-            addNewSalesRepRequest (item) {
+            addNewSalesRepRequest(item) {
                 this.$Progress.start();
                 axios.defaults.headers.common = {
                     'X-Requested-With': 'XMLHttpRequest',
@@ -653,7 +703,7 @@
                     });
                 });
             },
-            populateSalesRepNum (no) {
+            populateSalesRepNum(no) {
                 this.editedSalesRep.no = no;
             },
             addNewSalesRepToTable(salesRep) {
@@ -670,7 +720,7 @@
                     city: salesRep.city
                 });
             },
-            editSalesRepRequest (item) {
+            editSalesRepRequest(item) {
                 this.$Progress.start();
                 axios.defaults.headers.common = {
                     'X-Requested-With': 'XMLHttpRequest',
@@ -831,7 +881,7 @@
                 this.deleteRouteRequest(item);
                 this.deletedIndexRoute = this.routesMain.indexOf(item);
             },
-            editRoute (item) {
+            editRoute(item) {
                 this.editedIndexRoute = this.routesMain.indexOf(item);
                 this.editedRoute = Object.assign({}, item);
                 this.routeDialog = true;
@@ -844,6 +894,8 @@
                 };
                 axios.post('/addNewRoute', {
                     name: item.name,
+                    startNo: item.startNo,
+                    endNo: item.endNo
                 }).then((response) => {
                     console.log(response);
                     if (response.status === 200) {
@@ -887,7 +939,9 @@
                 };
                 axios.post('/editRoute', {
                     id: item.no,
-                    name: item.name
+                    name: item.name,
+                    startNo: item.startNo,
+                    endNo: item.endNo
                 }).then((response) => {
                     console.log(response);
                     if (response.status === 200) {
@@ -985,6 +1039,7 @@
                             });
                         } else {
                             this.populateRouteNum(response.data.num);
+                            this.populateStartAndEndNo(response.data.startNo, response.data.endNo);
                         }
 
                     }
@@ -1001,13 +1056,19 @@
             populateRouteNum(no) {
                 this.editedRoute.no = no;
             },
+            populateStartAndEndNo(startNo, endNo) {
+                this.editedRoute.startNo = startNo;
+                this.editedRoute.endNo = endNo;
+            },
             deleteRouteFromTable() {
                 this.routesMain.splice(this.deletedIndexRoute, 1);
             },
             addNewRouteToTable(route) {
                 this.routesMain.push({
                     no: route.id,
-                    name: route.name
+                    name: route.name,
+                    startNo: route.startNo,
+                    endNo: route.endNo
                 });
             },
             addEditRouteToTable() {
@@ -1017,10 +1078,10 @@
                 this.initialCash = cash_amount;
             },
             onclickEditCashAmount() {
-                this.cashAmountUpdateDialog=true;
+                this.cashAmountUpdateDialog = true;
             },
             confirmCashBookAmount() {
-                this.cashAmountUpdateDialog=false;
+                this.cashAmountUpdateDialog = false;
                 this.cashBookUpdateRequest();
             },
             cashBookUpdateRequest() {

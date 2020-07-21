@@ -56,7 +56,48 @@
                     </v-list-tile>
                     <v-list-tile>
                         <v-list-tile-content>
-                            <v-list-tile-title>{{ labelLoanList }}</v-list-tile-title>
+<!--                            <v-list-tile-title>{{ labelLoanList }}</v-list-tile-title>-->
+                            <router-link :to="{ name: 'LoanList' }">{{ labelLoanList }}</router-link>
+                        </v-list-tile-content>
+                    </v-list-tile>
+                </v-list-group>
+                <v-list-group>
+                    <v-list-tile slot="activator">
+                        <v-list-tile-action>
+                            <v-icon>local_offer</v-icon>
+                        </v-list-tile-action>
+                        <v-list-tile-content>
+                            <v-list-tile-title>{{ labelSupLoans }}</v-list-tile-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+                    <v-list-tile>
+                        <v-list-tile-content>
+                            <router-link :to="{ name: 'SupplierLoan' }">{{ labelSupLoanDashboard }}</router-link>
+                        </v-list-tile-content>
+                    </v-list-tile>
+                    <v-list-tile>
+                        <v-list-tile-content>
+                            <router-link :to="{ name: 'SupplierLoanList' }">{{ labelSupLoanList }}</router-link>
+                        </v-list-tile-content>
+                    </v-list-tile>
+                </v-list-group>
+                <v-list-group>
+                    <v-list-tile slot="activator">
+                        <v-list-tile-action>
+                            <v-icon>local_offer</v-icon>
+                        </v-list-tile-action>
+                        <v-list-tile-content>
+                            <v-list-tile-title>{{ labelEmpLoans }}</v-list-tile-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+                    <v-list-tile>
+                        <v-list-tile-content>
+                            <router-link :to="{ name: 'EmployeeLoan' }">{{ labelEmpLoanDashboard }}</router-link>
+                        </v-list-tile-content>
+                    </v-list-tile>
+                    <v-list-tile>
+                        <v-list-tile-content>
+                            <router-link :to="{ name: 'EmployeeLoanList' }">{{ labelEmpLoanList }}</router-link>
                         </v-list-tile-content>
                     </v-list-tile>
                 </v-list-group>
@@ -77,6 +118,36 @@
                     <v-list-tile>
                         <v-list-tile-content>
                             <router-link :to="{ name: 'PaySheet' }">Pay Sheet</router-link>
+                        </v-list-tile-content>
+                    </v-list-tile>
+                    <v-list-tile>
+                        <v-list-tile-content>
+                            <router-link :to="{ name: 'CustomerOutstandingReport' }">Customer Outstanding Report</router-link>
+                        </v-list-tile-content>
+                    </v-list-tile>
+                    <v-list-tile>
+                        <v-list-tile-content>
+                            <router-link :to="{ name: 'ExtraIncomeReport' }">Extra Income Report</router-link>
+                        </v-list-tile-content>
+                    </v-list-tile>
+                    <v-list-tile>
+                        <v-list-tile-content>
+                            <router-link :to="{ name: 'ExtraExpensesReport' }">Extra Expenses Report</router-link>
+                        </v-list-tile-content>
+                    </v-list-tile>
+                    <v-list-tile>
+                        <v-list-tile-content>
+                            <router-link :to="{ name: 'LoanCollectionReportComponent' }">Loan Collection Report</router-link>
+                        </v-list-tile-content>
+                    </v-list-tile>
+                    <v-list-tile>
+                        <v-list-tile-content>
+                            <router-link :to="{ name: 'MonthlySheet' }">Monthly Report</router-link>
+                        </v-list-tile-content>
+                    </v-list-tile>
+                    <v-list-tile>
+                        <v-list-tile-content>
+                            <router-link :to="{ name: 'NewLoanReport' }">New Loan Report</router-link>
                         </v-list-tile-content>
                     </v-list-tile>
                 </v-list-group>
@@ -174,14 +245,20 @@
             labelCustomers: "Customers",
             labelCustomersList: "Customer List",
             labelCustomerDashboard:"Customer Dashboard",
-            labelLoans: "Loans",
-            labelLoanDashboard: "Loan Dashboard",
-            labelLoanList: "Loan List",
+            labelLoans: "Customer Loans",
+            labelLoanDashboard: "Customer Loan Dashboard",
+            labelLoanList: "Customer Loan List",
             labelCashBook: "Cash Book",
             labelBankBook: "Bank Book",
             labelReport: "Reports",
             labelIncome: "Income",
-            labelExpense: "Expense"
+            labelExpense: "Expense",
+            labelSupLoans:"Supplier Loans",
+            labelSupLoanDashboard:"Supplier Loan Dashboard",
+            labelSupLoanList:"Supplier Loan List",
+            labelEmpLoans:"Employee Loans",
+            labelEmpLoanDashboard:"Employee Loan Dashboard",
+            labelEmpLoanList:"Employee Loan List"
         }),
         props: {
             source: String

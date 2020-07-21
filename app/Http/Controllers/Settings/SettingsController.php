@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Settings;
 
 
 use App\Cash_book;
+use App\CustomerRange;
 use App\Http\Controllers\Controller;
 use App\Route;
 use App\User;
@@ -29,12 +30,18 @@ class SettingsController extends Controller
                 $salesRep->route = $this->formatSalesRep($salesRep);
             }
 
+            foreach ($routes as $route){
+                $range = DB::table('customer_ranges')->where('route_id','=',$route->id)->whereNull('deleted_at')->first();
+                $route->startNo = $range->start;
+                $route->endNo = $range->end;
+            }
+
             return response()->json([
                 'error' => false,
                 'user' => $user,
                 'salesReps' => $salesReps,
                 'routes' => $routes,
-                'cash_balance'=>$cash_balance
+                'cash_balance'=>$cash_balance,
             ]);
         } catch (Exception $e) {
             return response()->json([
@@ -242,12 +249,26 @@ class SettingsController extends Controller
         }
     }
 
+    private function getStartNoRouteRanges() {
+        $last_end_number = DB::table('customer_ranges')->whereNull('deleted_at')->orderBy('end','dsc')
+            ->select('end')
+            ->pluck('end')
+            ->first();
+
+        return $last_end_number+1;
+    }
+
     public function getRouteNumber() {
         $no = DB::table('route')->orderBy('id', 'desc')->select('id')->pluck('id')->first();
 
+        $startNo = $this->getStartNoRouteRanges();
+        $endNo = $startNo+1000;
+
         return response()->json([
             'error' => false,
-            'num' => $no + 1
+            'num' => $no + 1,
+            'startNo'=>$startNo,
+            'endNo'=>$endNo
         ]);
     }
 
@@ -261,7 +282,11 @@ class SettingsController extends Controller
                 'deleted_at'=>Carbon::now()
             ]);
 
-            if ($count>0) {
+            $count1 = DB::table('customer_ranges')->where('route_id','=',$id)->update([
+                'deleted_at'=>Carbon::now()
+            ]);
+
+            if ($count>0 && $count1) {
                 return response()->json([
                     'error'=>false,
                     'message'=>"successfully deleted!"
@@ -283,13 +308,21 @@ class SettingsController extends Controller
     public function editRoute (Request $request) {
         $id = $request['id'];
         $name = $request['name'];
+        $startNo = $request['startNo'];
+        $endNo = $request['endNo'];
 
         $count = DB::table('route')->where('id','=',$id)->update([
             'name'=>$name,
             'updated_at'=>Carbon::now()
         ]);
 
-        if ($count>0) {
+        $count1 = DB::table('customer_ranges')->where('route_id','=',$id)->update([
+            'start'=>$startNo,
+            'end'=>$endNo,
+            'updated_at'=>Carbon::now()
+        ]);
+
+        if ($count>0 && $count1) {
             return response()->json([
                 'error'=>false,
                 'message'=>"Updated successfully"
@@ -304,9 +337,13 @@ class SettingsController extends Controller
 
     public function addNewRoute (Request $request) {
         $name = $request['name'];
+        $startNo = $request['startNo'];
+        $endNo = $request['endNo'];
 
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255'
+            'name' => 'required|string|max:255',
+            'startNo'=>'required',
+            'endNo'=>'required'
         ]);
 
         if ($validator->fails()) {
@@ -322,6 +359,12 @@ class SettingsController extends Controller
                 ]);
 
                 if ($route) {
+
+                    $range = $this->addCustomerRanges($route->id, $startNo, $endNo);
+
+                    $route->startNo = $range->start;
+                    $route->endNo = $range->end;
+
                     return response()->json([
                         'error' => FALSE,
                         'route' => $route
@@ -338,6 +381,20 @@ class SettingsController extends Controller
                     'message' => "Unknown error occurred"
                 ]);
             }
+        }
+    }
+
+    private function addCustomerRanges($route_id, $startNo, $endNo) {
+        try{
+            $customer_range = new CustomerRange();
+            $customer_range->route_id = $route_id;
+            $customer_range->start = $startNo;
+            $customer_range->end = $endNo;
+            $customer_range->save();
+
+            return $customer_range;
+        } catch (Exception $e){
+            return null;
         }
     }
 

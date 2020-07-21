@@ -1,9 +1,10 @@
-
 /**
  * First we will load all of this project's JavaScript dependencies which
  * includes Vue and other libraries. It is a great starting point when
  * building robust, powerful web applications using Vue and Laravel.
  */
+import CustomerLoanListComponent from "./components/Loans/CustomerLoanListComponent";
+
 
 require('./bootstrap');
 
@@ -27,6 +28,17 @@ import Settings from './components/settings/SettingsComponent';
 import Expenses from './components/expenses/ExpensesComponent';
 import Income from './components/income/IncomeComponent';
 import DailySummary from './components/dailySummary/dailySummaryComponent';
+import CustomerOutstandingReportComponent from "./components/Reports/CustomerOutstandingReportComponent";
+import ExtraExpensesReportComponent from "./components/Reports/ExtraExpensesReportComponent";
+import ExtraIncomeReportComponent from "./components/Reports/ExtraIncomeReportComponent";
+import LoanCollectionReportComponent from "./components/Reports/LoanCollectionReportComponent";
+import MonthlySheetComponent from "./components/Reports/MonthlySheetComponent";
+import NewLoanReportComponent from "./components/Reports/NewLoanReportComponent";
+import SupplierLoanComponent from "./components/Loans/SupplierLoanComponent";
+import SupplierLoanListComponent from "./components/Loans/SupplierLoanListComponent";
+import EmployeeLoanComponent from "./components/Loans/EmployeeLoanComponent";
+import EmployeeLoanListComponent from "./components/Loans/EmployeeLoanListComponent";
+import EntryDashboard from "./components/dashboard/EntryDashboard"
 
 Vue.use(Notification);
 Vue.use(VueRouter);
@@ -34,6 +46,11 @@ Vue.use(VueRouter);
 const router = new VueRouter({
     mode: 'history',
     routes: [
+        {
+            path: '/entrydashboard',
+            name: 'entryDashboard',
+            component: EntryDashboard
+        },
         {
             path: '/daysheet',
             name: 'DaySheet',
@@ -65,6 +82,11 @@ const router = new VueRouter({
             component: LoanDashboard
         },
         {
+            path: '/loanlist',
+            name: 'LoanList',
+            component: CustomerLoanListComponent
+        },
+        {
             path: '/cashbook',
             name: 'CashBook',
             component: CashBook
@@ -93,6 +115,56 @@ const router = new VueRouter({
             path: '/dailySummary',
             name: 'DailySummary',
             component: DailySummary
+        },
+        {
+            path: '/customeroutstandingreport',
+            name: 'CustomerOutstandingReport',
+            component: CustomerOutstandingReportComponent
+        },
+        {
+            path: '/extraexpensesreport',
+            name: 'ExtraExpensesReport',
+            component: ExtraExpensesReportComponent
+        },
+        {
+            path: '/extraincomereport',
+            name: 'ExtraIncomeReport',
+            component: ExtraIncomeReportComponent
+        },
+        {
+            path: '/loancollectionreport',
+            name: 'LoanCollectionReport',
+            component: LoanCollectionReportComponent
+        },
+        {
+            path: '/monthlysheet',
+            name: 'MonthlySheet',
+            component: MonthlySheetComponent
+        },
+        {
+            path: '/newloanreport',
+            name: 'NewLoanReport',
+            component: NewLoanReportComponent
+        },
+        {
+            path: '/supplierloan',
+            name: 'SupplierLoan',
+            component: SupplierLoanComponent
+        },
+        {
+            path: '/supplierloanlist',
+            name: 'SupplierLoanList',
+            component: SupplierLoanListComponent
+        },
+        {
+            path: '/employeeloan',
+            name: 'EmployeeLoan',
+            component: EmployeeLoanComponent
+        },
+        {
+            path: '/employeeloanlist',
+            name: 'EmployeeLoanList',
+            component: EmployeeLoanListComponent
         }
     ]
 });
@@ -135,6 +207,7 @@ Vue.component('calendar',require('./components/calendar/CalendarComponent.vue'))
 Vue.component('pdf-generator', require('./components/PDF/PDFGenerator'));
 Vue.component('day-sheet-component', require('./components/Reports/DaySheetComponent'));
 Vue.component('bar-chart',require('./components/Charts/CustomerLineChartComponent'));
+
 const app = new Vue({
     el: '#app',
     router,

@@ -50,7 +50,7 @@ class PaySheetController extends ReportController
             $monthStartDate = Carbon::createFromDate($year,$month,1);
             $basic_salary = $this->getBasicSalary($sales_rep_id, $monthStartDate);
             $commissions_details = $this->loanCommissionDetails($sales_rep_id,$monthStartDate);
-            $commissions_total = $commissions_details['total'];
+            $commissions_total = round($commissions_details['total'], 2);
             $commissions = $commissions_details['commissions'];
             $total_salary = round($basic_salary + $commissions_total, 2);
             $salary_pay_details = $this->getPayments($sales_rep_id, $monthStartDate);
@@ -83,6 +83,7 @@ class PaySheetController extends ReportController
         return $basic;
     }
 
+    //TODO check this
     private function loanCommissionDetails($sales_rep_id, $date) {
         $commissions = DB::table('sales_rep_commission')->whereMonth('created_at',Carbon::parse($date)->month)
             ->where('user_id',$sales_rep_id)
@@ -92,8 +93,12 @@ class PaySheetController extends ReportController
         if ($commissions) {
             foreach ($commissions as $commission) {
                 $total += $commission->commission_amount;
-                $commission->customer = DB::table('customer')->where('id','=',$commission->user_id)->first();
-                $commission->loan = DB::table('customer_loan')->where('id','=',$commission->loan_id)->first();
+
+                $customer_loan = DB::table('customer_loan')->where('id','=',$commission->loan_id)->first();
+                $commission->loan = $customer_loan;
+
+                $customer = DB::table('customer')->where('id', '=', $customer_loan->customer_id)->first();
+                $commission->customer = $customer;
             }
         }
 

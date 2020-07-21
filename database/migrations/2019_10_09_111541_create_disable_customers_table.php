@@ -31,6 +31,6 @@ class CreateDisableCustomersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('diable_customers');
+        Schema::dropIfExists('disable_customers');
     }
 }

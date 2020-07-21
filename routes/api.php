@@ -19,6 +19,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::post('/login', 'api\LoginController@login');
+Route::post('/liteLogin', 'api\LoginController@liteLogin');
 Route::group(['middleware'=>'api'],function (){
     Route::post('/users', 'api\UserController@store');
     Route::post('/customerRepayments','api\RepaymentController@customerRepayments');

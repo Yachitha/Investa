@@ -161,6 +161,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         App\Providers\custom\CustomerServiceProvider::class,
         Barryvdh\DomPDF\ServiceProvider::class,
+        JasperPHP\JasperPHPServiceProvider::class
     ],
 
     /*
@@ -210,6 +211,7 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         'PDF' => Barryvdh\DomPDF\Facade::class,
+        'JasperPHP'=>\JasperPHP\Facades\JasperPHP::class
     ],
 
 ];

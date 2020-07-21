@@ -186,24 +186,33 @@
                         :search="search"
                     >
                         <template slot="items" slot-scope="props">
-                            <td>{{ props.item.customerNo }}</td>
-                            <td>{{ props.item.nicNo }}</td>
-                            <td class="text-xs-left">{{ props.item.customerName }}</td>
-                            <td class="justify-center layout px-0 align-center">
-                                <v-icon
-                                    small
-                                    class="mr-2"
-                                    @click="editItem(props.item)"
-                                >
-                                    edit
-                                </v-icon>
-                                <v-icon
-                                    small
-                                    @click="deleteItem(props.item)"
-                                >
-                                    delete
-                                </v-icon>
-                            </td>
+                            <tr :class="{'warning': props.item.status==='disable'?true:false}">
+                                <td>{{ props.item.customerNo }}</td>
+                                <td>{{ props.item.nicNo }}</td>
+                                <td class="text-xs-left">{{ props.item.customerName }}</td>
+                                <td class="justify-center layout px-0 align-center">
+                                    <v-icon
+                                        small
+                                        class="mr-2"
+                                        @click="editItem(props.item)"
+                                    >
+                                        edit
+                                    </v-icon>
+                                    <v-icon
+                                        small
+                                        @click="deleteItem(props.item)"
+                                    >
+                                        delete
+                                    </v-icon>
+                                    <v-icon
+                                        small
+                                        class="ml-2"
+                                        @click="onClickCustomer(props.item.id)"
+                                    >
+                                        book
+                                    </v-icon>
+                                </td>
+                            </tr>
                         </template>
                         <template slot="no-data">
                             <v-alert :value="true" color="error" icon="warning">
@@ -256,7 +265,9 @@
                             </template>
                         </v-data-table>
                         <v-flex>
-                            <v-chip v-for="item in selected_arr" :key="item.customerNo" color="red" text-color="white">{{item.customerNo}}</v-chip>
+                            <v-chip v-for="item in selected_arr" :key="item.customerNo" color="red" text-color="white">
+                                {{item.customerNo}}
+                            </v-chip>
                         </v-flex>
                         <v-card-actions>
                             <v-flex text-xs-center>
@@ -299,6 +310,96 @@
                     </v-card>
                 </v-dialog>
             </v-layout>
+            <v-layout row justify-center>
+                <v-dialog v-model="customerLoanDetailsDialog" max-width="800" scrollable persistent>
+                    <v-card>
+                        <v-card-title>
+                            <h3>{{ customerLoanDetailsDialogTitle }}</h3>
+                        </v-card-title>
+                        <v-card-text>
+                            <v-data-table
+                                :headers="loan_details_header"
+                                :items="customerLoans"
+                                class="elevation-1"
+                            >
+                                <template slot="items" slot-scope="props">
+                                    <tr @click="onclickLoan(props.item)" :class="{'primary': props.item.isSelected}">
+                                        <td>{{ props.item.loanNo }}</td>
+                                        <td>{{ props.item.loanAmount }}</td>
+                                        <td>{{ props.item.loanInterest }}</td>
+                                        <td>{{ props.item.loanDays }}</td>
+                                        <td>{{ props.item.loanInstallment }}</td>
+                                        <td>{{ props.item.loanTotal }}</td>
+                                        <td>{{ props.item.loanDuePayment }}</td>
+                                    </tr>
+                                </template>
+                                <template slot="no-data">
+                                    <v-alert :value="true" color="error" icon="warning">
+                                        This customer has no loans yet :(
+                                    </v-alert>
+                                </template>
+                                <template slot="footer">
+                                    <tr :style="{backgroundColor:'orange'}">
+                                        <td colspan="2">
+                                            <strong>{{ labelTotalLoanAmount }}</strong>
+                                        </td>
+                                        <td>
+                                            {{total_loan_amt}}
+                                        </td>
+                                        <td colspan="3">
+                                            <strong>{{ labelTotalDue }}</strong>
+                                        </td>
+                                        <td>
+                                            {{totalOutstandingValue}}
+                                        </td>
+                                    </tr>
+                                </template>
+                            </v-data-table>
+                        </v-card-text>
+                        <v-card-actions>
+                            <v-flex text-xs-center>
+                                <v-btn color="green darken-1" @click="onclickOkForCustomerLoan" flat="flat">OK</v-btn>
+                            </v-flex>
+                        </v-card-actions>
+                    </v-card>
+                </v-dialog>
+            </v-layout>
+            <v-layout row justify-center>
+                <v-dialog v-model="customerLoanRepaymentDetailsDialog" max-width="700" scrollable persistent>
+                    <v-card>
+                        <v-card-title>
+                            <h3>{{ customerLoanRepaymentDetailsDialogTitle }}</h3>
+                        </v-card-title>
+                        <v-card-text>
+                            <v-data-table
+                                :headers="loanRepaymentsHeader"
+                                :items="loanRepayments"
+                                class="elevation-1"
+                            >
+                                <template slot="items" slot-scope="props">
+                                    <tr :class="{'primary': props.item.isSelected}">
+                                        <td>{{ props.item.paymentNo }}</td>
+                                        <td>{{ props.item.paymentDate }}</td>
+                                        <td>{{ props.item.paymentAmount }}</td>
+                                    </tr>
+                                </template>
+                                <template slot="no-data">
+                                    <v-alert :value="true" color="error" icon="warning">
+                                        This loan has no payments yet :(
+                                    </v-alert>
+                                </template>
+                            </v-data-table>
+                        </v-card-text>
+                        <v-card-actions>
+                            <v-flex text-xs-center>
+                                <v-btn color="green darken-1" @click="onclickOkForCustomerLoanRepayment" flat="flat">
+                                    OK
+                                </v-btn>
+                            </v-flex>
+                        </v-card-actions>
+                    </v-card>
+                </v-dialog>
+            </v-layout>
         </v-container>
     </v-app>
 </template>
@@ -334,6 +435,11 @@
                         align: 'left',
                         sortable: false,
                         value: 'customerName'
+                    },
+                    {
+                        text: 'Actions',
+                        align: 'center',
+                        sortable: false,
                     }
                 ],
                 customers: [],
@@ -348,6 +454,7 @@
                 salesReps: [],
                 editedIndex: -1,
                 editedItem: {
+                    id: 0,
                     customerNo: '',
                     customerName: '',
                     route_id: 0,
@@ -360,6 +467,7 @@
                     city: ''
                 },
                 defaultItem: {
+                    id: 0,
                     customerNo: '',
                     customerName: '',
                     route_id: 0,
@@ -432,6 +540,80 @@
                 customerNumbersDialog: false,
                 customerNumbersDialogTitle: "Customer Numbers",
                 cust_no: 0,
+                customerLoanDetailsDialog: false,
+                customerLoanDetailsDialogTitle: "Customer Loan Details",
+                customerLoans: [],
+                totalOutstandingValue: 0,
+                loan_details_header: [
+                    {
+                        text: 'Loan No',
+                        align: 'left',
+                        sortable: false,
+                        value: 'loanNo'
+                    },
+                    {
+                        text: 'Loan Amount',
+                        align: 'left',
+                        sortable: false,
+                        value: 'loanAmount'
+                    },
+                    {
+                        text: 'Interest Rate',
+                        align: 'left',
+                        sortable: false,
+                        value: 'loanInterest'
+                    },
+                    {
+                        text: 'Days',
+                        align: 'left',
+                        sortable: false,
+                        value: 'loanDays'
+                    },
+                    {
+                        text: 'Installment',
+                        align: 'left',
+                        sortable: false,
+                        value: 'loanInstallment'
+                    },
+                    {
+                        text: 'Total Loan',
+                        align: 'left',
+                        sortable: false,
+                        value: 'loanTotal'
+                    },
+                    {
+                        text: 'Due Amount',
+                        align: 'left',
+                        sortable: false,
+                        value: 'loanDuePayment'
+                    }
+                ],
+                loanRepayments: [],
+                loanRepaymentsHeader: [
+                    {
+                        text: 'Payment No',
+                        align: 'left',
+                        sortable: false,
+                        value: 'paymentNo'
+                    },
+                    {
+                        text: 'Payment Date',
+                        align: 'left',
+                        sortable: false,
+                        value: 'paymentDate'
+                    },
+                    {
+                        text: 'Payment Amount',
+                        align: 'left',
+                        sortable: false,
+                        value: 'paymentAmount'
+                    }
+                ],
+                customerLoanRepaymentDetailsDialog: false,
+                customerLoanRepaymentDetailsDialogTitle: "Loan Payment Details",
+                total_loan_amt:0,
+                labelTotalLoanAmount:"Total Loan Amount",
+                labelTotalDue:"Total Due Amount"
             }
         },
         computed: {
@@ -464,6 +646,7 @@
                 let customers = item.customers;
                 customers.forEach((customer) => {
                     this.customers.push({
+                        id: customer.id,
                         route_id: item.route_id,
                         route: this.routesCopy,
                         customerNo: customer.customer_no,
@@ -477,6 +660,7 @@
                     });
 
                     this.sortCustomers.push({
+                        id: customer.id,
                         route_id: item.route_id,
                         route: this.routesCopy,
                         customerNo: customer.customer_no,
@@ -497,6 +681,7 @@
                 this.dialog = true
             },
             deleteItem(item) {
+                //TODO get customer id to delete customerNo is not unique anymore
                 this.deleteIndex = this.customers.indexOf(item);
                 this.deleteCustomerNo = item.customerNo;
                 this.customerDeleteConfirmDialog = true;
@@ -614,6 +799,7 @@
                                 })
                             });
                             this.routesCopy = response.data.routes;
+
                             response.data.customers.forEach((item) => {
                                 this.initialize(item);
                             });
@@ -717,7 +903,6 @@
                     contact_no: item.contactNo,
                     route_id: this.routeId !== 0 ? this.routeId : item.route_id
                 }).then((response) => {
-                    console.log(response);
                     if (response.status === 200) {
                         if (response.data.error) {
                             this.$Progress.fail();
@@ -755,6 +940,7 @@
             },
             addNewCustomerToTable(customer) {
                 this.customers.push({
+                    id: customer.id,
                     route_id: customer.route_id,
                     route: this.routesCopy,
                     customerNo: customer.customer_no,
@@ -768,6 +954,7 @@
                 });
 
                 this.sortCustomers.push({
+                    id: customer.id,
                     route_id: customer.route_id,
                     route: this.routesCopy,
                     customerNo: customer.customer_no,
@@ -846,7 +1033,6 @@
                 };
                 axios.get('/getCustomerNumbers').then((response) => {
                     if (response.status === 200) {
-                        console.log(response);
                         if (response.data.error) {
                             this.$notify({
                                 group: 'auth',
@@ -899,7 +1085,6 @@
                 };
                 axios.get('/getCustomersToDisable').then((response) => {
                     if (response.status === 200) {
-                        console.log(response);
                         if (response.data.error) {
                             this.$notify({
                                 group: 'auth',
@@ -923,9 +1108,9 @@
                     });
                 });
             },
-            pushDisabling (customers){
+            pushDisabling(customers) {
                 this.flushDisableList();
-                customers.forEach((cus)=>{
+                customers.forEach((cus) => {
                     this.d_cus.push({
                         id: cus.id,
                         customerNo: cus.customer_no,
@@ -983,7 +1168,6 @@
                 axios.post('/disableCustomers', {
                     selected_arr: this.selected_arr,
                 }).then((response) => {
-                    console.log(response);
                     if (response.status === 200) {
                         if (response.data.error) {
                             this.$Progress.fail();
@@ -1022,7 +1206,7 @@
             selectDisable(item) {
                 let prevState = false;
                 this.selected_arr.forEach((selectedItem) => {
-                    if (item.customerNo === selectedItem.customerNo){
+                    if (item.customerNo === selectedItem.customerNo) {
                         prevState = true;
                     }
                 });
@@ -1031,15 +1215,108 @@
                     this.selected_arr.push(item);
                 } else {
                     this.$delete(item, "isSelected");
-                    this.selected_arr.splice(this.selected_arr.indexOf(item),1);
+                    this.selected_arr.splice(this.selected_arr.indexOf(item), 1);
                 }
             },
             disableCustomerCancel() {
                 this.selected_arr.splice(0, this.selected_arr.length);
-                this.d_cus.forEach((item)=>{
+                this.d_cus.forEach((item) => {
                     this.$delete(item, "isSelected");
                 });
-                this.disableCustomersDialog=false;
+                this.disableCustomersDialog = false;
+            },
+            onClickCustomer(id) {
+                this.customerLoanDetailsReq(id);
+                this.showCustomerLoanDetailsDialog();
+            },
+            showCustomerLoanDetailsDialog() {
+                this.customerLoanDetailsDialog = true;
+            },
+            hideCustomerLoanDetailsDialog() {
+                this.customerLoanDetailsDialog = false;
+            },
+            customerLoanDetailsReq(id) {
+                this.$Progress.start();
+                axios.defaults.headers.common = {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                };
+                axios.post('/customerLoanDetailsById', {
+                    customer_id: id
+                }).then((response) => {
+                    if (response.status === 200) {
+                        if (response.data.error) {
+                            this.$Progress.fail();
+                            this.$notify({
+                                group: 'auth',
+                                title: 'Error',
+                                type: 'error',
+                                text: response.data.message,
+                                fontsize: '20px'
+                            });
+                        } else {
+                            this.$Progress.finish();
+                            this.publishCustomerLoanData(response.data);
+                        }
+                    }
+                }).catch((error) => {
+                    this.$notify({
+                        group: 'auth',
+                        title: 'Error',
+                        type: 'error',
+                        text: error,
+                        fontsize: '20px'
+                    });
+                });
+            },
+            publishCustomerLoanData(data) {
+                let total = 0;
+                let dueTotal = 0;
+                data.loans.forEach((item) => {
+                    this.customerLoans.push({
+                        loanNo: item.id,
+                        loanAmount: item.loan_amount,
+                        loanInterest: item.interest_rate,
+                        loanDays: item.duration,
+                        loanInstallment: item.installment_amount,
+                        loanTotal: item.total_loan_amount,
+                        loanDuePayment: item.due_amount,
+                        repayments: item.repayments
+                    });
+                    total += item.total_loan_amount;
+                    dueTotal += item.due_amount;
+                });
+
+                this.total_loan_amt = total;
+                this.totalOutstandingValue = dueTotal;
+            },
+            onclickOkForCustomerLoan() {
+                this.customerLoanDetailsDialog = false;
+                this.flushCustomerLoanData();
+            },
+            flushCustomerLoanData() {
+                this.customerLoans.splice(0, this.customerLoans.length);
+                this.totalOutstandingValue = 0;
+            },
+            onclickLoan(item) {
+                this.flushRepaymentData();
+                this.requestRepaymentData(item);
+                this.customerLoanRepaymentDetailsDialog = true;
+            },
+            flushRepaymentData() {
+                this.loanRepayments.splice(0, this.loanRepayments.length);
+            },
+            requestRepaymentData(loan) {
+                loan.repayments.forEach((repayment) => {
+                    this.loanRepayments.push({
+                        paymentNo: repayment.id,
+                        paymentDate: repayment.created_at,
+                        paymentAmount: repayment.amount
+                    });
+                });
+            },
+            onclickOkForCustomerLoanRepayment() {
+                this.customerLoanRepaymentDetailsDialog = false;
             }
         }
     }

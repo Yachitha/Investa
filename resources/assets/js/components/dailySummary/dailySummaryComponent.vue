@@ -11,6 +11,35 @@
                                         {{ compName }}
                                     </v-list-tile-title>
                                 </v-list-tile-content>
+                                <v-layout align-center justify-end>
+                                    <v-flex sm3 offset-sm1>
+                                        <v-menu
+                                            ref="menu"
+                                            :close-on-content-click="false"
+                                            v-model="menu"
+                                            :nudge-right="40"
+                                            :return-value.sync="date"
+                                            lazy
+                                            transition="scale-transition"
+                                            offset-y
+                                            full-width
+                                            min-width="290px"
+                                        >
+                                            <v-text-field
+                                                slot="activator"
+                                                v-model="date"
+                                                prepend-icon="event"
+                                                readonly
+                                                hide-details
+                                            ></v-text-field>
+                                            <v-date-picker v-model="date" no-title scrollable>
+                                                <v-spacer></v-spacer>
+                                                <v-btn flat color="primary" @click="menu = false">Cancel</v-btn>
+                                                <v-btn flat color="primary" @click="selectedDate(date)">OK</v-btn>
+                                            </v-date-picker>
+                                        </v-menu>
+                                    </v-flex>
+                                </v-layout>
                             </v-list-tile>
                         </v-card-actions>
                     </v-card>
@@ -326,7 +355,10 @@
                 routeCol: 0,
                 editItemDialog: false,
                 itemCusNo:0,
-                repAmount:0
+                repAmount:0,
+                itemLoanNum:0,
+                menu: false,
+                date: new Date().toISOString().substr(0, 10),
             }
         },
         methods: {
@@ -385,16 +417,114 @@
                 this.total_ex = extras.total_ex;
                 this.new_loans_total = extras.total_loan_amt;
             },
+            flushData() {
+                this.new_loans.splice(0, this.new_loans.length);
+                this.repayments.splice(0, this.repayments.length);
+                this.routes.splice(0, this.routes.length);
+                this.expenses.splice(0, this.expenses.length);
+                this.c_book_amt = 0;
+                this.b_book_amt = 0;
+                this.total_col = 0;
+                this.total_ex = 0;
+                this.new_loans_total = 0;
+            },
             selectRoute(id) {
                 this.colRouteId = id;
             },
             onClickRepItem(item) {
                 this.itemCusNo = item.cust_no;
                 this.repAmount = item.amount;
+                this.itemLoanNum = item.loan_no;
                 this.editItemDialog=true;
             },
             editItemSubmit() {
-                console.log("xxxx");
+                this.editItemDialog = false;
+                this.requestEditRepayment();
+            },
+            selectedDate(date) {
+                this.$refs.menu.save(date);
+                this.requestDataByDate();
+            },
+            requestDataByDate() {
+                this.$Progress.start();
+                axios.defaults.headers.common = {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                };
+                axios.post('/dailySummaryDataByDate', {
+                    date: this.date
+                }).then((response) => {
+                    console.log(response);
+                    if (response.status === 200) {
+                        if (response.data.error) {
+                            this.$Progress.fail();
+                            this.$notify({
+                                group: 'auth',
+                                title: 'Error',
+                                type: 'error',
+                                text: response.data.message,
+                                fontsize: '20px'
+                            });
+                        } else {
+                            this.$Progress.finish();
+                            this.flushData();
+                            this.populateSum(response.data.new_loans, response.data.repayments, response.data.routes, response.data.expenses, response.data.extras);
+                        }
+
+                    }
+                }).catch((error) => {
+                    this.$notify({
+                        group: 'auth',
+                        title: 'Error',
+                        type: 'error',
+                        text: error,
+                        fontsize: '20px'
+                    });
+                });
+            },
+            requestEditRepayment() {
+                this.$Progress.start();
+                axios.defaults.headers.common = {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                };
+                axios.post('/editRepaymentByNum', {
+                    date: this.date,
+                    loan_no: this.itemLoanNum,
+                    new_amount: this.repAmount
+                }).then((response) => {
+                    console.log(response);
+                    if (response.status === 200) {
+                        if (response.data.error) {
+                            this.$Progress.fail();
+                            this.$notify({
+                                group: 'auth',
+                                title: 'Error',
+                                type: 'error',
+                                text: response.data.message,
+                                fontsize: '20px'
+                            });
+                        } else {
+                            this.$Progress.finish();
+                            this.$notify({
+                                group: 'auth',
+                                title: 'Success',
+                                type: 'success',
+                                text: response.data.message,
+                                fontsize: '20px'
+                            });
+                        }
+
+                    }
+                }).catch((error) => {
+                    this.$notify({
+                        group: 'auth',
+                        title: 'Error',
+                        type: 'error',
+                        text: error,
+                        fontsize: '20px'
+                    });
+                });
             }
         },
         created() {
@@ -445,12 +575,13 @@
     }
 
     .bg-special {
-        background-repeat: inherit;
-        background-position: inherit;
-        background-image: inherit;
-        background-color: inherit;
-        background-attachment: inherit;
-    }
+         background-repeat: inherit;
+         background-position: inherit;
+         background-image: inherit;
+         background-color: inherit;
+         background-attachment: inherit;
+     }
+
     .bg-gradient{
         background: rgb(97,9,163);
         background: linear-gradient(90deg, rgba(97,9,163,0.9836309523809523) 0%, rgba(123,46,200,1) 21%, rgba(122,125,183,1) 100%);
