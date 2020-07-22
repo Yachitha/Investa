@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.12.2.final using JasperReports Library version 6.12.2-75c5e90a222ab406e416cbf590a5397028a52de3  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="day_sheet_test_json2" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="026327c7-f7fb-46bd-bee9-444f36345a5c">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="jsontest1"/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w1" value="366"/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w2" value="620"/>
+	<style name="Table_TH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_CH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="Dataset1" uuid="bd6c18a4-3d0b-4de5-8a27-54370a7b235e">
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="jsontest1"/>
+		<queryString language="json">
+			<![CDATA[result.table_date]]>
+		</queryString>
+		<field name="bf_amount" class="java.math.BigDecimal">
+			<property name="net.sf.jasperreports.json.field.expression" value="bf_amount"/>
+			<fieldDescription><![CDATA[bf_amount]]></fieldDescription>
+		</field>
+		<field name="loan_payment" class="java.math.BigDecimal">
+			<property name="net.sf.jasperreports.json.field.expression" value="loan_payment"/>
+			<fieldDescription><![CDATA[loan_payment]]></fieldDescription>
+		</field>
+		<field name="loan_investment" class="java.math.BigDecimal">
+			<property name="net.sf.jasperreports.json.field.expression" value="loan_investment"/>
+			<fieldDescription><![CDATA[loan_investment]]></fieldDescription>
+		</field>
+		<field name="extra_exp" class="java.math.BigDecimal">
+			<property name="net.sf.jasperreports.json.field.expression" value="extra_exp"/>
+			<fieldDescription><![CDATA[extra_exp]]></fieldDescription>
+		</field>
+		<field name="balance" class="java.math.BigDecimal">
+			<property name="net.sf.jasperreports.json.field.expression" value="balance"/>
+			<fieldDescription><![CDATA[balance]]></fieldDescription>
+		</field>
+		<field name="access" class="java.math.BigDecimal">
+			<property name="net.sf.jasperreports.json.field.expression" value="access"/>
+			<fieldDescription><![CDATA[access]]></fieldDescription>
+		</field>
+	</subDataset>
+	<parameter name="JSON_INPUT_STREAM" class="java.io.InputStream" isForPrompting="false"/>
+	<parameter name="net.sf.jasperreports.json.source" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="net.sf.jasperreports.json.sources" class="java.util.List" isForPrompting="false"/>
+	<parameter name="net.sf.jasperreports.json.date.pattern" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="net.sf.jasperreports.json.number.pattern" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="JSON_LOCALE" class="java.util.Locale" isForPrompting="false"/>
+	<parameter name="net.sf.jasperreports.json.locale.code" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="JSON_TIME_ZONE" class="java.util.TimeZone" isForPrompting="false"/>
+	<parameter name="net.sf.jasperreports.json.timezone.id" class="java.lang.String" isForPrompting="false"/>
+	<queryString language="json">
+		<![CDATA[result]]>
+	</queryString>
+	<field name="date" class="java.lang.String">
+		<property name="net.sf.jasperreports.json.field.expression" value="date"/>
+		<fieldDescription><![CDATA[date]]></fieldDescription>
+	</field>
+	<field name="route" class="java.lang.String">
+		<property name="net.sf.jasperreports.json.field.expression" value="route"/>
+		<fieldDescription><![CDATA[route]]></fieldDescription>
+	</field>
+	<field name="sales_rep" class="java.lang.String">
+		<property name="net.sf.jasperreports.json.field.expression" value="sales_rep"/>
+		<fieldDescription><![CDATA[sales_rep]]></fieldDescription>
+	</field>
+	<field name="due_total_col" class="java.math.BigDecimal">
+		<property name="net.sf.jasperreports.json.field.expression" value="due_total_col"/>
+		<fieldDescription><![CDATA[due_total_col]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="125" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="200" height="25" uuid="776dfd01-4895-4244-9017-e0959c115f80"/>
+				<textElement>
+					<font size="16"/>
+				</textElement>
+				<text><![CDATA[SOUTHERN INVESTMENT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="349" y="0" width="110" height="25" uuid="22d4b2c4-a800-4071-96ff-7531badb723a"/>
+				<textElement verticalAlignment="Middle">
+					<font size="16"/>
+				</textElement>
+				<text><![CDATA[DAY SHEET - ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="460" y="0" width="90" height="25" uuid="954978d8-3737-4a27-a198-5900bdb21887"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{date}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="30" width="50" height="19" uuid="ec47e95b-a319-4156-a563-1551fd03a44b"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Route - ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="50" y="30" width="100" height="19" uuid="fe782d0a-66c0-41bc-81e4-c14f12d2f775"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{route}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="180" y="30" width="60" height="19" uuid="ac46e71d-25c3-4ab6-afec-dac963c0a0b5"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Sales Rep]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="250" y="30" width="80" height="19" uuid="eef9e597-ddd2-4baa-a3d5-bdcd0e601f3a"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{sales_rep}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="349" y="30" width="120" height="19" uuid="04bcc49a-05aa-43c6-accd-d9056f73b0aa"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Due Total Collection - ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="470" y="30" width="80" height="19" uuid="45447928-5be9-4043-a2b0-6189aa8cc9ca"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{due_total_col}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement x="0" y="60" width="550" height="60" uuid="b172913f-6936-452e-b7e7-82d962f7805c">
+					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
+					<property name="com.jaspersoft.studio.table.style.table_header" value="Table_TH"/>
+					<property name="com.jaspersoft.studio.table.style.column_header" value="Table_CH"/>
+					<property name="com.jaspersoft.studio.table.style.detail" value="Table_TD"/>
+				</reportElement>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="Dataset1" uuid="3059ecf4-ae83-48bc-9447-43c372ceb9cc">
+						<datasetParameter name="JSON_INPUT_STREAM">
+							<datasetParameterExpression><![CDATA[$P{JSON_INPUT_STREAM}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="net.sf.jasperreports.json.source">
+							<datasetParameterExpression><![CDATA[$P{net.sf.jasperreports.json.source}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="net.sf.jasperreports.json.sources">
+							<datasetParameterExpression><![CDATA[$P{net.sf.jasperreports.json.sources}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="net.sf.jasperreports.json.date.pattern">
+							<datasetParameterExpression><![CDATA[$P{net.sf.jasperreports.json.date.pattern}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="net.sf.jasperreports.json.number.pattern">
+							<datasetParameterExpression><![CDATA[$P{net.sf.jasperreports.json.number.pattern}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="JSON_LOCALE">
+							<datasetParameterExpression><![CDATA[$P{JSON_LOCALE}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="net.sf.jasperreports.json.locale.code">
+							<datasetParameterExpression><![CDATA[$P{net.sf.jasperreports.json.locale.code}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="JSON_TIME_ZONE">
+							<datasetParameterExpression><![CDATA[$P{JSON_TIME_ZONE}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="net.sf.jasperreports.json.timezone.id">
+							<datasetParameterExpression><![CDATA[$P{net.sf.jasperreports.json.timezone.id}]]></datasetParameterExpression>
+						</datasetParameter>
+						<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.JsonDataSource)$P{REPORT_DATA_SOURCE}).subDataSource("table_date")]]></dataSourceExpression>
+					</datasetRun>
+					<jr:column width="80" uuid="c7b602ea-db4f-4101-b039-d87932a3f642">
+						<jr:columnHeader style="Table_CH" height="30">
+							<staticText>
+								<reportElement x="0" y="0" width="80" height="30" uuid="f4514f21-8b84-4aac-9259-6df0794f4e6d"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<text><![CDATA[Bf Amount]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="Table_TD" height="30">
+							<textField>
+								<reportElement x="0" y="0" width="80" height="30" uuid="b3c80751-7b08-45ca-b263-781306d0408a"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA[$F{bf_amount}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="100" uuid="1ded91f0-f5e7-442e-a1f8-fe9463138c3f">
+						<jr:columnHeader style="Table_CH" height="30">
+							<staticText>
+								<reportElement x="0" y="0" width="100" height="30" uuid="367a8cbf-b577-4fd2-83a8-6d3e35a5f73c"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<text><![CDATA[Loan Payment]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="Table_TD" height="30">
+							<textField>
+								<reportElement x="0" y="0" width="100" height="30" uuid="25c9006d-20cf-4f57-9516-7dfe30717599"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA[$F{loan_payment}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="100" uuid="c1bc9730-5ea2-419b-90bf-6c42ebed0866">
+						<jr:columnHeader style="Table_CH" height="30">
+							<staticText>
+								<reportElement x="0" y="0" width="100" height="30" uuid="c227157e-0acb-4be9-aa93-2807fe576a8a"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<text><![CDATA[Loan Investment]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="Table_TD" height="30">
+							<textField>
+								<reportElement x="0" y="0" width="100" height="30" uuid="dcf342a4-9871-47b8-9f69-d4170cf43b84"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA[$F{loan_investment}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="97" uuid="8037ff40-e4bd-4e4c-ac9c-34be54cd2ecd">
+						<jr:columnHeader style="Table_CH" height="30">
+							<staticText>
+								<reportElement x="0" y="0" width="97" height="30" uuid="f2dbcbb8-b078-4862-977d-abc5517756bd"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<text><![CDATA[Extra Exp]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="Table_TD" height="30">
+							<textField>
+								<reportElement x="0" y="0" width="97" height="30" uuid="3da9e574-76a5-4652-ae59-a3cfc2b48672"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA[$F{extra_exp}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="110" uuid="4b6d3e53-a774-41a7-8d11-47debabe281f">
+						<jr:columnHeader style="Table_CH" height="30">
+							<staticText>
+								<reportElement x="0" y="0" width="110" height="30" uuid="8fc782de-a84d-4bfa-89d5-4801f3b32671"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<text><![CDATA[Balance]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="Table_TD" height="30">
+							<textField>
+								<reportElement x="0" y="0" width="110" height="30" uuid="ac0098d8-69d1-4fc6-9c8b-43c53718c410"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA[$F{balance}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="60" uuid="4ac51c1b-e931-4e9d-ab64-72a150dd0590">
+						<jr:columnHeader style="Table_CH" height="30">
+							<staticText>
+								<reportElement x="0" y="0" width="60" height="30" uuid="7ab129de-728a-49ec-bf7f-5ca5a331645c"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<text><![CDATA[Access]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="Table_TD" height="30">
+							<textField>
+								<reportElement x="0" y="0" width="60" height="30" uuid="b1af1273-6572-411d-9bfd-f66e88a2edad"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA[$F{access}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+	</title>
+	<detail>
+		<band height="32" splitType="Stretch">
+			<subreport>
+				<reportElement x="0" y="0" width="550" height="30" uuid="e4728b2c-5ab8-42be-baf9-563c551d91de"/>
+				<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.JsonDataSource)$P{REPORT_DATA_SOURCE}).subDataSource("payment_details")]]></dataSourceExpression>
+				<subreportExpression><![CDATA["subreport_test2.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="34" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</band>
+	</pageFooter>
+</jasperReport>
