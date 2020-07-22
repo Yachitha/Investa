@@ -845,33 +845,25 @@ class DaySheet extends ReportController
 
     private function saveDaySheetJson() {
         $datafile = public_path() . '/day_sheet_json/day_sheet_1.json';
-        $output = public_path() . '/temp/data' . time();
-        $input = public_path() . '/jasper-template/day_sheet_test_json2.jasper';
-
-        $options = [
-            'format'=>['pdf'],
-            'params'=>[],
-            'locale'=>'en',
-            'db_connection'=>[
-                'driver'=>'json',
-                'data_file'=>$datafile,
-                'json_query'=>''
-            ]
-        ];
+        $output = public_path() . '/temp/day_sheet'.time();
+        $input = public_path() . '/jasper-template/day_sheet_test_json2.jrxml';
 
         try {
             $day_sheet_jp = new JasperPHP;
             $day_sheet_jp->process(
                 $input,
                 $output,
-                $options
+                array("pdf"),
+                array(),
+                array("driver"=>"json", "json_query"=>"result" ,"data_file"=>$datafile)
             )->execute();
 
-            if(file_exists($output)) {
-                return $output;
+            if(file_exists($output.".pdf")) {
+                return $output.".pdf";
             } else {
-                return $datafile . "#" . $input . "#" . $output;
+                return null;
             }
+
         } catch (Exception $e) {
             Log::debug($e->getTraceAsString());
             return $e->getMessage();

@@ -1,0 +1,1 @@
+jasperstarter process "/home/yachitha/Others/Investa/public/jasper-template/day_sheet_test_json2.jrxml" -o "/home/yachitha/Others/Investa/public/temp/data" -f pdf -t json --data-file "/home/yachitha/Others/Investa/public/day_sheet_json/day_sheet_1.json"

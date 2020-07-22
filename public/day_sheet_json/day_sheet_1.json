@@ -1,6 +1,6 @@
 {
     "result": {
-        "date": "2020/05/29",
+        "date": "2020/07/22",
         "route": "GALLE",
         "sales_rep": "Chathuranga",
         "due_total_col": "80800.00",
@@ -10,7 +10,7 @@
             "loan_investment": "25000.00",
             "extra_exp": "200.00",
             "balance": "100.00",
-            "access": "0.00"
+            "access": "500.00"
         },
         "payment_details":
         [
