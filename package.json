@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "ajv": "^6.6.2",
-    "chart.js": "^2.7.3",
+    "chart.js": "^2.9.4",
     "epic-spinners": "^1.0.3",
     "html2canvas": "^1.0.0-alpha.12",
     "imagemin": "5.0.0",
